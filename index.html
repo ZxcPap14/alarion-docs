@@ -66,7 +66,12 @@
     header.hero h1{font-size:26px}
     h2{font-size:21px}
   }
-table.narrow td:first-child, table.narrow th:first-child{white-space:nowrap}</style>
+table.narrow td:first-child, table.narrow th:first-child{white-space:nowrap}
+footer.about{margin:56px 0 10px; padding:22px 26px; background:var(--panel); border:1px solid #2b3a47; border-radius:12px; color:var(--muted); font-size:14.5px; line-height:1.65; max-width:84ch}
+footer.about h2{margin:0 0 12px; font-size:13px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+footer.about p{margin:0 0 12px}
+footer.about p:last-child{margin:0}
+footer.about b{color:var(--gold)}</style>
 </head>
 <body>
 <div class="layout">
@@ -331,6 +336,23 @@ table.narrow td:first-child, table.narrow th:first-child{white-space:nowrap}</st
 <p>Собрано и проверено на живом стенде: 11 классов, 22 теста (<code>gradlew test</code>), jar <code>alarion-0.2.1.jar</code> (51&nbsp;242 B). Что уже работает:</p>
 <div class="table-wrap"><table><thead><tr><th>Слой</th><th>Классы</th><th>Что делает</th></tr></thead><tbody><tr><td>точка входа</td><td><code>Alarion</code></td><td>регистрация событий, команд</td></tr><tr><td>конфиг</td><td><code>ConfigManager</code>, <code>StatsConfig</code></td><td>копирует <code>alarion/default-config.json</code> → <code>config/alarion.json</code>, <code>/rpg reload</code> при ошибке держит прежний конфиг</td></tr><tr><td>формулы</td><td><code>Formula</code>, <code>Progress</code></td><td>парсер выражений, вид прогресса (<code>allocated</code> / <code>rank</code> / <code>locked</code>)</td></tr><tr><td>данные</td><td><code>StatsData</code>, <code>Stats</code></td><td>attachment <code>alarion:stats</code> (<code>entries</code>, <code>unspent</code>, <code>last_level</code>), <code>copyOnDeath</code></td></tr><tr><td>числа статов</td><td><code>StatSheet</code></td><td>один пересчёт, чтение по каналам <code>value</code> / <code>multiplier</code> / <code>chance</code> / <code>flag</code></td></tr><tr><td>атрибуты</td><td><code>AttributeApplier</code></td><td>снимает все модификаторы namespace <code>alarion</code> и ставит заново, id <code>alarion:&lt;стат&gt;_&lt;индекс&gt;</code></td></tr><tr><td>стамина</td><td><code>Stamina</code></td><td>бег и удар тратят, на нуле бег снимается, полоса в actionbar раз в 0.5 с</td></tr><tr><td>бой</td><td><code>Combat</code></td><td>крит отдельным ударом от канала <code>crit</code>, стамина на удар</td></tr><tr><td>очки</td><td><code>Points</code></td><td><code>allocate</code> / <code>respec</code> (возвращает всё), админские <code>add</code> / <code>set</code></td></tr><tr><td>команды</td><td><code>Stats</code></td><td><code>/rpg</code>, <code>reload</code>, <code>stats</code>, <code>add</code>, <code>set</code>, <code>allocate</code>, <code>respec</code> (у каждой — необязательный ник)</td></tr></tbody></table></div>
 <p>Чего в коде нет и что это значит: своего уровня и кривой опыта (M2), маны и проверки каста (M4), рангов от урона (M4), клиентской части и окна статуса (M6), связи с чужими модами (M3–M4). Перечисленные выше расхождения — те же этапы, только со стороны конфига.</p>
+    <footer class="about">
+      <h2>О чём этот мод</h2>
+    <p><b>alarion</b> — RPG-надстройка над Minecraft 1.21.1 для маленького приватного сервера.
+      Свой персонаж собирается из трёх слоёв характеристик: пять физических — сила, выносливость,
+      ловкость, интеллект и проворство — растут очками, которые дают уровни; три защитных —
+      упорство, самообладание и выдержка — очками не качаются вовсе, их поднимает только
+      полученный урон, рангами от F до K; три духовных откроются позже и пока скрыты.</p>
+    <p>Свой бой мод не придумывает: он связывает то, что уже есть в сборке. Заклинания Wizards
+      бьют сильнее от интеллекта и тратят ману, вес предметов из FFItemWeight давит на движение,
+      а сила отодвигает предел переносимого, кольца и амулет из Trinkets добавляют защиты и
+      ресурсов. Поверх этого — своя цена ошибки: на нуле стамины не убежать, удар больше половины
+      здоровья оглушает и слепит, удар почти в ноль оставляет на грани смерти, а опыт идёт за
+      мобов CustomNPCs, а не за ванильных.</p>
+    <p>Видит игрок всё это через окно статуса, которое заменяет инвентарь, и HUD с полосами
+      здоровья, стамины и маны. Остальное — за кадром: характеристики, ранги и пороги живут
+      в конфиге и правятся без пересборки.</p>
+  </footer>
   </main>
 </div>
 <script>
