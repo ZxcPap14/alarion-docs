@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>alarion — проектная документация</title>
+<style>
+  :root{
+    --bg:#10151b; --panel:#1b2530; --card:#16202a; --line:#2b3a47; --frame:#74838f;
+    --text:#d7e2ea; --muted:#8fa3b3; --gold:#f0c04a; --teal:#7fe0d2; --sel:#2a6f68;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.65 "Segoe UI",Roboto,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .layout{display:flex; min-height:100vh}
+  nav{
+    position:sticky; top:0; align-self:flex-start; width:320px; height:100vh; overflow-y:auto;
+    background:var(--panel); border-right:1px solid var(--line); padding:24px 18px 60px; flex:0 0 320px;
+  }
+  nav .brand{font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-size:13px}
+  nav .sub{color:var(--muted); font-size:12px; margin:4px 0 18px}
+  nav a{display:block; color:var(--muted); text-decoration:none; padding:4px 8px; border-radius:6px; font-size:14px}
+  nav a.lvl2{color:var(--text); font-weight:600; margin-top:10px}
+  nav a.lvl3{padding-left:20px; font-size:13.5px}
+  nav a:hover{background:var(--card); color:var(--teal)}
+  nav .sep{height:1px; background:var(--line); margin:14px 0}
+  main{flex:1 1 auto; min-width:0; padding:44px 56px 120px; max-width:1180px}
+  header.hero{border-bottom:1px solid var(--line); padding-bottom:22px; margin-bottom:30px}
+  header.hero h1{margin:0 0 6px; font-size:34px; letter-spacing:.02em}
+  header.hero h1 span{color:var(--gold)}
+  header.hero p{margin:0; color:var(--muted); font-size:14px}
+  .badges{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+  .badge{background:var(--card); border:1px solid var(--line); color:var(--teal); font-size:12px; padding:3px 10px; border-radius:999px}
+  h1,h2,h3,h4,h5,h6{line-height:1.25; scroll-margin-top:20px}
+  h2{margin:52px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--line); font-size:25px; color:#fff}
+  h2::before{content:""; display:inline-block; width:8px; height:8px; margin-right:10px; border-radius:2px; background:var(--gold); vertical-align:middle}
+  h3{margin:30px 0 10px; font-size:19px; color:var(--teal)}
+  h4{margin:22px 0 8px; font-size:16px; color:#fff}
+  p{margin:10px 0}
+  a{color:var(--teal)}
+  code{background:#0c1116; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:13.5px; font-family:ui-monospace,Consolas,monospace; color:#a9e8dc}
+  pre{background:#0c1116; border:1px solid var(--line); border-radius:10px; padding:16px; overflow-x:auto}
+  pre code{border:0; background:none; padding:0; color:#cfe8e2}
+  hr{border:0; border-top:1px solid var(--line); margin:34px 0}
+  ul,ol{margin:10px 0; padding-left:24px}
+  li{margin:5px 0}
+  li>ul,li>ol{margin:4px 0}
+  .table-wrap{overflow-x:auto; margin:16px 0; border:1px solid var(--line); border-radius:10px}
+  table{border-collapse:collapse; width:100%; font-size:14px; background:var(--card)}
+  th,td{padding:9px 12px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line)}
+  th{background:#22303d; color:#fff; font-weight:600; white-space:nowrap; position:sticky; top:0}
+  tbody tr:nth-child(even){background:#141d26}
+  tbody tr:hover{background:#1d2b36}
+  tbody tr:last-child td{border-bottom:0}
+  strong{color:#fff}
+  @media (max-width:900px){
+    .layout{display:block}
+    nav{position:static; width:auto; height:auto; flex:none; border-right:0; border-bottom:1px solid var(--line)}
+    main{padding:26px 18px 90px}
+    header.hero h1{font-size:26px}
+    h2{font-size:21px}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <div class="brand">alarion</div>
+    <div class="sub">спека мода · сборка 0.2.1 · 13.11.2026</div>
+    <a class="lvl2" href="#top">Начало</a>
+    <div class="sep"></div>
+      <a class="lvl2" href="#1-задача-и-рамки">1. Задача и рамки</a>
+      <a class="lvl3" href="#платформа-по-факту-с-живого-сервера">Платформа (по факту, с живого сервера)</a>
+      <a class="lvl3" href="#как-мод-попадает-на-сервер">Как мод попадает на сервер</a>
+      <a class="lvl2" href="#2-пять-характеристик">2. Пять характеристик</a>
+      <a class="lvl3" href="#2-1-сила-strength">2.1 Сила (`strength`)</a>
+      <a class="lvl3" href="#2-2-выносливость-endurance">2.2 Выносливость (`endurance`)</a>
+      <a class="lvl3" href="#2-3-ловкость-agility">2.3 Ловкость (`agility`)</a>
+      <a class="lvl3" href="#2-4-интеллект-intellect">2.4 Интеллект (`intellect`)</a>
+      <a class="lvl3" href="#2-5-проворство-dexterity">2.5 Проворство (`dexterity`)</a>
+      <a class="lvl2" href="#3-как-выдаются-очки-решено-12-11-2026-q-2">3. Как выдаются очки (решено 12.11.2026 — Q-2)</a>
+      <a class="lvl3" href="#3-1-опыт-за-убийство-q-27-12-11-2026">3.1 Опыт за убийство (Q-27, 12.11.2026)</a>
+      <a class="lvl3" href="#3-2-сколько-опыта-на-уровень-q-27-13-11-2026">3.2 Сколько опыта на уровень (Q-27, 13.11.2026)</a>
+      <a class="lvl2" href="#4-ресурсы-и-как-их-видно-игроку">4. Ресурсы и как их видно игроку</a>
+      <a class="lvl2" href="#5-что-не-реализуемо-в-ванили-и-чем-закрываем-сверено-по-tmp-">5. Что не реализуемо в ванили — и чем закрываем (сверено по `tmp`, 12.11.2026)</a>
+      <a class="lvl2" href="#6-технические-решения">6. Технические решения</a>
+      <a class="lvl3" href="#6-1-где-живут-данные">6.1 Где живут данные</a>
+      <a class="lvl3" href="#6-2-свои-атрибуты-можно-но-не-нужно">6.2 Свои атрибуты: можно, но не нужно</a>
+      <a class="lvl3" href="#6-3-точки-подключения">6.3 Точки подключения</a>
+      <a class="lvl3" href="#6-4-команды">6.4 Команды</a>
+      <a class="lvl2" href="#7-этапы">7. Этапы</a>
+      <a class="lvl2" href="#8-как-проверять">8. Как проверять</a>
+      <a class="lvl2" href="#9-риски-и-грабли">9. Риски и грабли</a>
+      <a class="lvl2" href="#10-три-класса-характеристик-спека-11-11-2026">10. Три класса характеристик (спека 11.11.2026)</a>
+      <a class="lvl3" href="#10-1-физические-5">10.1 Физические — 5</a>
+      <a class="lvl3" href="#10-2-защитные-3-ранги-f-k">10.2 Защитные — 3, ранги F..K</a>
+      <a class="lvl3" href="#10-3-духовно-социальные-3-скрытые-q-14-13-11-2026">10.3 Духовно-социальные — 3, скрытые (Q-14, 13.11.2026)</a>
+      <a class="lvl2" href="#11-архитектура-характеристики-как-данные">11. Архитектура: характеристики как данные</a>
+      <a class="lvl3" href="#11-1-три-слоя">11.1 Три слоя</a>
+      <a class="lvl3" href="#11-2-формулы">11.2 Формулы</a>
+      <a class="lvl3" href="#11-3-реестр-эффектов">11.3 Реестр эффектов</a>
+      <a class="lvl3" href="#11-4-порядок-применения">11.4 Порядок применения</a>
+      <a class="lvl3" href="#11-5-хранение">11.5 Хранение</a>
+      <a class="lvl3" href="#11-6-статусы-что-берём-готовым-что-своё">11.6 Статусы — что берём готовым, что своё</a>
+      <a class="lvl3" href="#11-7-клиент-и-синхронизация">11.7 Клиент и синхронизация</a>
+      <a class="lvl3" href="#11-8-боевая-модель-ресурсы-защита-урон-оружие">11.8 Боевая модель: ресурсы, защита, урон, оружие</a>
+      <a class="lvl2" href="#12-интерфейс-окно-статуса-макет-11-11-2026">12. Интерфейс: «Окно статуса» (макет 11.11.2026)</a>
+      <a class="lvl3" href="#12-1-слева-зона-персонажа">12.1 Слева: зона персонажа</a>
+      <a class="lvl3" href="#12-2-центр-окно-статуса">12.2 Центр: окно статуса</a>
+      <a class="lvl3" href="#12-3-справа-панель-описание">12.3 Справа: панель «Описание»</a>
+      <a class="lvl3" href="#12-4-что-из-этого-следует-для-кода">12.4 Что из этого следует для кода</a>
+      <a class="lvl3" href="#12-5-навыки-кто-есть-кто-q-17-12-11-2026">12.5 Навыки: кто есть кто (Q-17, 12.11.2026)</a>
+      <a class="lvl3" href="#12-6-макет-для-figma">12.6 Макет для Figma</a>
+      <a class="lvl2" href="#13-открытые-вопросы">13. Открытые вопросы</a>
+      <a class="lvl2" href="#14-журнал">14. Журнал</a>
+  </nav>
+  <main>
+    <header class="hero" id="top">
+      <h1>alarion <span>— проектная документация</span></h1>
+      <p>Один jar на сервер и клиент · MC 1.21.1 · Fabric · Java 21</p>
+      <div class="badges">
+        <span class="badge">характеристики</span>
+        <span class="badge">уровни 1..150</span>
+        <span class="badge">ранги F..K</span>
+        <span class="badge">мана</span>
+        <span class="badge">статусы L1</span>
+        <span class="badge">окно статуса</span>
+      </div>
+    </header>
+<h1 id="alarion-rpg-статы-для-сервера-fabric-1-21-1">alarion — RPG-статы для сервера (Fabric 1.21.1)</h1>
+<p>Статус: <strong>проектирование + код</strong>. Ядро 0.2.1 собрано и проверено на живом стенде (11 классов, 22 теста, §14). Файл по-прежнему единственный носитель решений, дописывать сюда. Боевая модель целиком — ресурсы, защита, урон, оружие — сведена в §11.8; она шире того, что уже в коде.</p>
+<p><strong>С 12.11.2026 мод не один</strong>: магию, вес и слоты дают чужие моды (Wizards/Spell Engine, FFItemWeight, Trinkets), alarion их не заменяет, а связывает со своими характеристиками (§1, §5). Это снимает большие куски работы и меняет часть решений ниже.</p>
+<p>Мод: <code>alarion</code> (архив <code>build/libs/alarion-&lt;ver&gt;.jar</code>, последняя собранная версия — <code>alarion-0.2.1.jar</code>).</p>
+<hr>
+<h2 id="1-задача-и-рамки">1. Задача и рамки</h2>
+<p>Мод: три класса характеристик с пассивными бонусами к бою, движению и ресурсам (§10).</p>
+<p><strong>Ключевое решение (пересмотрено 11.11.2026): мод ставится и на сервер, и в клиент.</strong> Прежняя версия «клиентской части нет» отменена: jar кладётся и в <code>mods/</code> сервера, и в <code>mods/</code> каждого игрока. Следствия:</p>
+<ul></li><li>клиентская часть — полноценная: HUD, экраны статов, свой GUI у NPC, тултипы;</li><li><code>lang</code>-файлы и ассеты доступны, <code>Text.translatable</code> разрешён (русский <code>ru_ru</code>);</li><li>один jar на обе стороны, код расходится по <code>environment</code>/<code>client</code>-пакетам, общие данные</ul>
+<p>(формулы, список характеристик) живут на сервере и <strong>приходят клиенту пакетом</strong>, чтобы клиент не разошёлся с сервером при правке JSON;</p>
+<ul></li><li>на ванильном клиенте мод не запустится — версия мода обязана совпадать у всех.</ul>
+<h3 id="платформа-по-факту-с-живого-сервера">Платформа (по факту, с живого сервера)</h3>
+<div class="table-wrap"><table><thead><tr><th>Параметр</th><th>Значение</th><th>Откуда</th></tr></thead><tbody><tr><td>Minecraft</td><td>1.21.1</td><td><code>tools/moddrop/README.md</code>, список модов сервера</td></tr><tr><td>Fabric Loader</td><td><strong>0.20.1</strong></td><td>README moddrop (не 0.16.10, как в <code>MOD_DENGI</code>)</td></tr><tr><td>Fabric API</td><td><strong>0.116.17+1.21.1</strong></td><td><code>fabric-api-0.116.17-1.21.1.jar</code> в <code>mods/</code></td></tr><tr><td>Java</td><td>21 (<code>release = 21</code>)</td><td>требование 1.21.1</td></tr><tr><td>Сборка</td><td><code>gradlew build</code> → <code>build/libs/alarion-&lt;ver&gt;.jar</code></td><td><code>watchDir</code> в moddrop</td></tr><tr><td>Сервер</td><td>PocketMC, папка <code>axiom</code>, порт 26666, <code>192.168.0.14</code></td><td>README moddrop</td></tr><tr><td>Игроков</td><td>2 подписчика (ты и друг)</td><td><code>state.json</code></td></tr></tbody></table></div>
+<p>Модовый набор сервера (для проверки конфликтов): <code>architectury</code>, <code>Axiom</code>, <code>cloth-config</code>, <code>clutter</code>, <code>CustomNPCs-Unofficial-Fabric</code>, <code>DecorativeBlocks-Reborn</code>, <code>dengi</code>, <code>letsdo-candlelight</code>, <code>letsdo-farm_and_charm</code>, <code>valhelsia_core</code>, <code>valhelsia_furniture</code>.</p>
+<p><strong>Планируемый набор (закинут в <code>tmp</code>, на сервер ещё не ставился):</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Группа</th><th>Моды</th><th>Зачем</th></tr></thead><tbody><tr><td>магия</td><td><code>spell_power</code>, <code>spell_engine</code>, <code>wizards</code> 3.1.3, <code>runes</code>, <code>armor_model_api</code>, <code>structure_pool_api</code>, <code>bundle_api</code>, <code>playeranimator</code></td><td>сила заклинаний и сопротивления (атрибуты), каст, заклинания, руны-боеприпас</td></tr><tr><td>вес</td><td><code>ffitemweight</code> 0.10.3 + вложенный <code>ffutilities</code></td><td>вес предметов, полосы перегруза, API ёмкости</td></tr><tr><td>слоты</td><td><code>trinkets</code> 3.10.0 (+ cardinal-components)</td><td>кольца и амулет вместо своих слотов</td></tr><tr><td>прочее</td><td><code>cloth-config</code> 15.0.140, <code>fabric-api</code> 0.116.18</td><td>зависимости</td></tr></tbody></table></div>
+<p>Ставятся <strong>отдельным шагом</strong> (обе стороны: сервер и клиент). Свои моды править разрешено — если чужой конфиг/датапак не даёт нужной связки, правим его, а не пишем дубль.</p>
+<p>Из этого следует: <strong>вес, магия и слоты аксессуаров есть</strong> (§5), а <code>CustomNPCs</code> даёт квесты под очки статов без своего движка (Q-2). Маны нет ни в одном из этих модов — она наша (§4).</p>
+<h3 id="как-мод-попадает-на-сервер">Как мод попадает на сервер</h3>
+<p>Готово и работает, трогать не нужно — <code>tools/moddrop</code>:</p>
+<ol></li><li><code>gradlew build</code> → jar появляется в <code>build/libs/</code>;</li><li>бот за ≤5 с копирует его в <code>tools/moddrop/history/</code> и рассылает подписчикам в Telegram;</li><li><code>/push</code> — копирует jar по SMB в <code>mods/</code> сервера, старые версии того же мода уводит в</ol>
+<p><code>mods/.old-mods/</code> (иначе два мода с одним id — сервер не поднимется);</p>
+<ol></li><li>«Перезапустить» — <code>stop</code> по rcon (<code>25575</code>) → ждёт закрытия 26666 → PocketMC поднимает сам.</ol>
+<p>Значит: для итераций нужен только <code>gradlew build</code>, остальное автоматом. Вручную ничего не копировать.</p>
+<hr>
+<h2 id="2-пять-характеристик">2. Пять характеристик</h2>
+<p>Пять <strong>физических</strong> характеристик; полный состав из трёх классов — §10, что они питают (ресурсы, защита, урон) — §11.8.</p>
+<p>Черновые числа. Все коэффициенты — в <code>config/alarion.json</code>, не в коде.</p>
+<p>Диапазон: 0..<strong>70</strong> на характеристику, очки вкладываются только в эти пять. Начисление — очко за каждый уровень плюс 3 очка на каждом пятом (§3.2), плюс <strong>+0.1 ко всем пяти за каждый новый уровень</strong> (автоматически, без очков). На 150-м уровне 240 очков против 350 мест (5 × 70), поэтому специализация обязательна: 70/70/70/30/0 и всё в этом духе.</p>
+<h3 id="2-1-сила-strength">2.1 Сила (<code>strength</code>)</h3>
+<div class="table-wrap"><table><thead><tr><th>Эффект</th><th>Формула</th><th>На 20</th></tr></thead><tbody><tr><td>Урон ближнего боя</td><td>+1.5 % за очко</td><td>+30 %</td></tr><tr><td>Шанс отбросить</td><td>+0.5 % за очко</td><td>10 %</td></tr><tr><td>Шанс оглушить</td><td>+0.25 %, потолок 5 %</td><td>5 %</td></tr><tr><td>Тяжёлое оружие/броня без штрафов</td><td>флаг; штрафов в ванили нет</td><td>—</td></tr><tr><td>Переносимый вес</td><td><strong>нет в ванили</strong>, §5.1</td><td>—</td></tr></tbody></table></div>
+<p><code>EntityAttributes.GENERIC_ATTACK_DAMAGE</code> + <code>ADD_MULTIPLIED_BASE</code> (в 1.21.1 константы ещё с <code>GENERIC_</code>, переименование случилось в 1.21.2). Оглушение — не «стан», а <code>Slowness IV</code> + <code>Mining Fatigue II</code> на 1.5 с: клиент покажет сам, отдельной механики не нужно.</p>
+<h3 id="2-2-выносливость-endurance">2.2 Выносливость (<code>endurance</code>)</h3>
+<div class="table-wrap"><table><thead><tr><th>Эффект</th><th>Формула</th><th>На 20</th></tr></thead><tbody><tr><td>Максимум стамины</td><td>100 + 4 за очко</td><td>180</td></tr><tr><td>Реген стамины</td><td>5/с + 0.25 за очко</td><td>10/с</td></tr><tr><td>Расход на бег/прыжок/удар</td><td>−1 % за очко</td><td>−20 %</td></tr><tr><td>Расход на копание</td><td>−1 % за очко</td><td>−20 %</td></tr></tbody></table></div>
+<p>Стамина — серверное число в attachment, не атрибут (§6.2). Расход: бег 8/с, прыжок 6, удар 4, сломанный блок 2. При 0: принудительный стоп бега, <code>Mining Fatigue I</code>, урон в ближнем бою −20 % до восстановления 30 % запаса. Задержка регена после траты — 1 с.</p>
+<h3 id="2-3-ловкость-agility">2.3 Ловкость (<code>agility</code>)</h3>
+<div class="table-wrap"><table><thead><tr><th>Эффект</th><th>Формула</th><th>На 20</th></tr></thead><tbody><tr><td>Шанс крита</td><td>+0.5 % за очко</td><td>10 %</td></tr><tr><td>Урон крита</td><td>+2 % за очко сверх ванильных ×1.5</td><td>+40 %</td></tr><tr><td>Скорость атаки, лёгкое оружие</td><td>+0.5 % к <code>attack_speed</code></td><td>+10 %</td></tr><tr><td>Скорость атаки, мечи</td><td>+0.15 %</td><td>+3 %</td></tr><tr><td>Разброс стрел при движении</td><td>−2 %</td><td>−40 %</td></tr></tbody></table></div>
+<p>«Лёгкое» = тег <code>#rpgstats:light_weapons</code> (кинжалы/рапиры из других модов), «мечи» — <code>#minecraft:swords</code>. В ванили кинжалов нет: в v1 тег заведён, но заполнен только мечами; модовое оружие подхватится без правок, если автор ставит стандартный тег. Топоры в лёгкие не попадают, иначе ловкость съест силу.</p>
+<h3 id="2-4-интеллект-intellect">2.4 Интеллект (<code>intellect</code>)</h3>
+<div class="table-wrap"><table><thead><tr><th>Эффект</th><th>Формула</th><th>На 20</th></tr></thead><tbody><tr><td>Максимум маны</td><td>50 + 3 за очко</td><td>110</td></tr><tr><td>Сила заклинаний</td><td>+1 % к <code>spell_power:generic</code> за очко</td><td>+20 %</td></tr><tr><td>Рецепты сложных крафтов</td><td>ступени 7 / 14 / 20 очков</td><td>—</td></tr></tbody></table></div>
+<p><strong>Качество зачарований удалено</strong> (Q-3, 12.11.2026): механики нет, строки нет.</p>
+<p>«Сила заклинаний» — не своя формула, а модификатор атрибута <code>spell_power:generic</code> из мода <code>spell_power</code> (§5.3): урон заклинаний Wizards уже считается от него (<code>spell_power_coefficient</code>). Мана — своя полоса поверх чужого каста (§4): без маны каст не начинается.</p>
+<p>Рецепты — без клиентского мода: сервер по порогам делает <code>serverPlayer.unlockRecipes(...)</code>, закрытые не видны в книге крафта. Список «сложных» — в конфиге (зелья, <code>enchanting_table</code>, …).</p>
+<h3 id="2-5-проворство-dexterity">2.5 Проворство (<code>dexterity</code>)</h3>
+<div class="table-wrap"><table><thead><tr><th>Эффект</th><th>Формула</th><th>На 20</th></tr></thead><tbody><tr><td>Скорость бега</td><td>+0.3 % к <code>movement_speed</code></td><td>+6 %</td></tr><tr><td>Скорость лазания</td><td>+1 % (лестницы, лианы)</td><td>+20 %</td></tr><tr><td>Шанс уклонения</td><td>+0.5 %, кулдаун 1.5 с</td><td>10 %</td></tr><tr><td>Высота прыжка</td><td>+1 уровень <code>Jump Boost</code> на каждые 8 очков</td><td>2 уровня</td></tr><tr><td>Радиус обнаружения мобом</td><td>−1 %</td><td>−20 %</td></tr><tr><td>Громкость шагов</td><td>−2 %</td><td>−40 %</td></tr><tr><td>Зацепиться за уступ</td><td><strong>v2</strong>: нужен клиент или хаки движения</td><td>—</td></tr></tbody></table></div>
+<p>Отдельного атрибута высоты прыжка нет — только ступени <code>Jump Boost</code>, это единственный ванильный путь.</p>
+<hr>
+<h2 id="3-как-выдаются-очки-решено-12-11-2026-q-2">3. Как выдаются очки (решено 12.11.2026 — Q-2)</h2>
+<div class="table-wrap"><table><thead><tr><th>Источник</th><th>Как работает</th></tr></thead><tbody><tr><td><strong>свой уровень</strong></td><td>опыт копится <strong>своей системой</strong>, ванильный <code>experienceLevel</code> не участвует; уровни 1..150, очко за уровень до 50-го (бюджет 50), дальше уровни дают хп и масштаб (§3.2)</td></tr><tr><td><strong>квесты <code>CustomNPCs</code></strong></td><td>награда выдаётся скриптом квеста командой <code>/rpg grant</code> (Java-событий у мода нет, §14)</td></tr><tr><td><strong>NPC</strong></td><td>у NPC в CustomNPCs есть свой уровень; очки статов раскидываются <strong>случайно</strong>, сколько — зависит от уровня и доступных очков, по тому же правилу, что у игрока (Q-15)</td></tr></tbody></table></div>
+<h3 id="3-1-опыт-за-убийство-q-27-12-11-2026">3.1 Опыт за убийство (Q-27, 12.11.2026)</h3>
+<p>Опыт даётся за убийство моба и зависит от <strong>разницы уровней</strong> <code>ΔLvl = уровень моба − уровень героя</code>:</p>
+<div class="table-wrap"><table><thead><tr><th>Случай</th><th>Формула</th><th>Пример (BaseEXP 100, BonusRate 0.05, MaxDiff 10)</th></tr></thead><tbody><tr><td>ΔLvl &gt; 0 (моб сильнее)</td><td><code>BaseEXP × (1 + BonusRate × ΔLvl)</code></td><td>+10 → 150, +4 → 120</td></tr><tr><td>ΔLvl = 0</td><td><code>BaseEXP</code></td><td>100</td></tr><tr><td>ΔLvl &lt; 0 (моб слабее)</td><td><code>BaseEXP × max(0, 1 + ΔLvl / MaxDiff)</code></td><td>−5 → 50, −10 и ниже → <strong>0</strong></td></tr></tbody></table></div>
+<p><code>BaseEXP = 100</code>, <code>BonusRate = 0.05</code>, <code>MaxDiff = 10</code> — все три в конфиге. Ноль на слабых мобах и есть защита от фарма. Уровень есть <strong>только у NPC и мобов CustomNPCs</strong> (Q-37): у ванильного зомби его нет, поэтому за ванильных мобов опыт по умолчанию не даётся (<code>vanilla_mobs_give_xp: false</code>).</p>
+<h3 id="3-2-сколько-опыта-на-уровень-q-27-13-11-2026">3.2 Сколько опыта на уровень (Q-27, 13.11.2026)</h3>
+<p>Переход <code>L → L+1</code> стоит <strong><code>60 × L²</code></strong>, но не меньше 100. Потолок — уровень <strong>150</strong>.</p>
+<div class="table-wrap"><table><thead><tr><th>Переход</th><th>Нужно XP</th><th>Формула</th></tr></thead><tbody><tr><td>1 → 2</td><td>100</td><td>минимум</td></tr><tr><td>5 → 6</td><td>1 500</td><td>60 × 25</td></tr><tr><td>10 → 11</td><td>6 000</td><td>60 × 100</td></tr><tr><td>20 → 21</td><td>24 000</td><td>60 × 400</td></tr><tr><td>30 → 31</td><td>54 000</td><td>60 × 900</td></tr><tr><td>50 → 51</td><td>150 000</td><td>60 × 2 500</td></tr><tr><td>100 → 101</td><td>600 000</td><td>60 × 10 000</td></tr><tr><td>140 → 141</td><td>1 176 000</td><td>60 × 19 600</td></tr><tr><td>149 → 150</td><td>1 350 000</td><td>отдельное значение</td></tr></tbody></table></div>
+<p>Единственное расхождение со списком — последний переход: по формуле <code>60 × 149² = 1 332 060</code>, в списке <code>1 350 000</code>. Принято значение из списка, оно лежит в конфиге отдельной строкой <code>level_xp_overrides: {"149": 1350000}</code>; остальные 16 переходов списка совпадают с формулой.</p>
+<p><strong>Очки (Q-38, Q-39).</strong> Очко за каждый уровень плюс <strong>+3 очка на каждом пятом</strong> (5, 10, … 150): <code>points = level + 3 × floor(level / 5)</code>, на 150-м уровне — <strong>240 очков</strong>. Бюджет 50 из конфига снят. Очки вкладываются <strong>только в пять физических</strong> характеристик, потолок каждой — <strong>70</strong>; 5 × 70 = 350 мест против 240 очков, то есть вкачать всё в максимум нельзя и специализация остаётся.</p>
+<p><strong>+0.1 за уровень.</strong> За каждое повышение уровня <strong>все пять</strong> характеристик растут на <strong>0.1</strong> сами, без очков: к 150-му это +14.9 у каждой. Значение характеристики складывается из двух частей: <code>allocated</code> (целые очки, которые тратит игрок) + <code>0.1 × (level − 1)</code>. Формулы считают по <strong>сумме</strong>, поэтому значение характеристики — дробное (<code>double</code>), а не целое (§11.3, §11.5).</p>
+<p><strong>Упорство, Самообладание, Выдержка очками не качаются</strong> — они растут только от полученного урона (§10.2), это отдельная ветка, на неё очки атрибутов не тратятся.</p>
+<p><strong>Про масштаб.</strong> До 150-го уровня суммарно около 66.8 млн XP; при <code>BaseEXP = 100</code> это ~668 тыс. убийств равного моба. Числа в конфиге, но <code>BaseEXP</code> придётся поднимать на порядки, иначе верхние уровни недостижимы.</p>
+<p>Смена схемы потом = миграция attachment, поэтому кривую опыта фиксировать до M2. Распределение — <code>/rpg</code> и «+» в окне статуса (§12.2). <code>/rpg grant</code> остаётся для квестов и админа.</p>
+<hr>
+<h2 id="4-ресурсы-и-как-их-видно-игроку">4. Ресурсы и как их видно игроку</h2>
+<p><strong>Стамина.</strong> Actionbar: <code>⚡ 128/180  │  STR 12  END 8  AGI 6  INT 3  DEX 1</code>. Обновление по событию (трата/реген/смена статов), но не чаще 4 раз в секунду — иначе actionbar мигает и грузит сеть. На нуле текст красный (<code>Text</code> форматирование, ассетов не надо).</p>
+<p><strong>Мана.</strong> Есть, и это <strong>наша</strong> полоса поверх чужого каста (Q-4, 12.11.2026). У модов магии своей маны нет вообще: цена каста там — кулдаун + руна-боеприпас. Поэтому проверку и списание маны делаем мы в точке начала каста (§6.3): <strong>маны не хватает — каст не начинается</strong>, без списания и с сообщением в actionbar. Числа (Q-28, 12.11.2026): пул <strong>50 + 3 за очко интеллекта</strong>, реген <strong>1 маны/с</strong>, цена каста <strong>по тиру заклинания</strong> — 10 маны за тир (одна таблица на все заклинания вместо правки 27 файлов).</p>
+<p>Входы остаются по карте: интеллект (<code>mana_max</code>), брюлики, класс через статы (§11.8.1). Полоса живёт рядом со стаминой на одном механизме и с тем же троттлингом.</p>
+<p><strong>Хп.</strong> По карте (§11.8.1) собирается из класса, уровня персонажа и брюликов. В v1 ничего из этого не двигает здоровье: хп ванильное, никаких своих полос не рисуем.</p>
+<hr>
+<h2 id="5-что-не-реализуемо-в-ванили-и-чем-закрываем-сверено-по-tmp-">5. Что не реализуемо в ванили — и чем закрываем (сверено по <code>tmp</code>, 12.11.2026)</h2>
+<ol></li><li><strong>Переносимый вес</strong> → <strong>FFItemWeight 0.10.3</strong>. Вес, полосы перегруза и HUD есть; статы</ol>
+<p>адаптируем под мод: ёмкость = <code>base × f(уровень) + плоские бонусы</code>, атрибута ёмкости у мода нет, поэтому бонус от силы добавляем <strong>миксином в <code>CapacityHelper.getFlatBonus</code></strong> (править чужой jar не нужно). Запасной путь — синхронизировать ванильный уровень с нашим (у мода формула <code>{level}</code> берёт именно <code>experienceLevel</code>). Q-31.</p>
+<ol></li><li><strong>«Тяжёлое оружие/броня без штрафов»</strong> → полосы перегруза FFItemWeight и дают штраф; сила</ol>
+<p>этот штраф отодвигает (п.1). Отдельной механики не пишем.</p>
+<ol></li><li><strong>«Урон/сила заклинаний»</strong> → <strong><code>spell_power</code></strong>: атрибуты <code>spell_power:generic</code> и 13 школ,</ol>
+<p>крит заклинаний, haste. Интеллект вешает модификатор на <code>spell_power:generic</code> (§2.4), урон заклинаний Wizards уже считается от него. Своего расчёта не пишем.</p>
+<ol></li><li><strong>«Точность стрельбы»</strong> = разброс стрелы, который зависит от движения. Мод может его</ol>
+<p>уменьшать, но это «меньше штраф за бег», а не «точность». Формулировку для игрока поправить.</p>
+<ol></li><li><strong>Зацеп за уступ / высокий прыжок</strong> без клиентского мода — только <code>Jump Boost</code> и</ol>
+<p>телепорт-подтягивание (дёргано). v2.</p>
+<ol></li><li><strong>Маг армор и резисты</strong> → <strong><code>spell_power:resistance.generic</code></strong> (+ по школам). Готовая кривая</ol>
+<p>(<code>LINEAR/QUADRATIC/HYPERBOLIC</code>), множитель и кап уже есть: маг армор = модификатор этого атрибута, не свой канал (§11.8.2). «Резисты» = сокращение длительности дебаффа (канал <code>debuff_duration</code> + <code>debuff_immunity</code>), §11.3.</p>
+<ol></li><li><strong>Чистый урон</strong> → свой <code>damage_type</code> с <code>bypasses_armor</code> и свой <code>DamageSource</code> (Q-22).</ol>
+<p>Магический урон при этом остаётся чужим (п.3).</p>
+<ol></li><li><strong>Кольца и доп. слоты («брюлики»)</strong> → <strong>Trinkets 3.10.0</strong>: 4 кольца + амулет, пять слотов,</ol>
+<p>статы предметов — <code>attribute_modifiers</code>. Свои слоты не пишем (Q-25).</p>
+<ol></li><li><strong>Классовые активки</strong> → заклинания Wizards уже с кулдауном и руной-боеприпасом; свои активки</ol>
+<p>(v2) приезжают данными, мана у них наша (§4, §11.8.6).</p>
+<ol></li><li><strong>Тип урона как свойство оружия</strong> → посох не наш предмет: у Wizards это предмет Spell Engine,</ol>
+<p>«маг урон» = школа заклинания, а не тип урона предмета. Кинжал — позже и только через эффект (§11.8.4, §11.8.5).</p>
+<ol></li><li><strong>Мана</strong> — не реализуема ни одним из модов (§4): своя полоса, своя проверка в точке каста.</ol>
+<hr>
+<h2 id="6-технические-решения">6. Технические решения</h2>
+<h3 id="6-1-где-живут-данные">6.1 Где живут данные</h3>
+<p>Одна запись на игрока: пять int статов, нераспределённые очки, стамина (float), кулдаун уклонения, флаг «рецепты уже выданы».</p>
+<p>Хранилище — <strong>Fabric Data Attachment API</strong> (входит в fabric-api, отдельная зависимость не нужна): <code>AttachmentRegistry.create(...)</code> + <code>AttachmentType&lt;PlayerStats&gt;</code> с <code>persistent(Codec)</code> и <code>copyOnDeath()</code>. Точные имена в 0.116.17 проверить перед M1 (Q-10). Cardinal Components не тянем — лишняя зависимость на сервере.</p>
+<p>Конфиг — Gson-JSON, без Cloth Config: он на сервере есть, но GUI для выделенного сервера не нужен, а AutoConfig тянет лишний слой. <code>config/alarion.json</code> + <code>/rpg reload</code>.</p>
+<h3 id="6-2-свои-атрибуты-можно-но-не-нужно">6.2 Свои атрибуты: можно, но не нужно</h3>
+<p>Прежнее «новый атрибут не добавить» <strong>неверно</strong> (снято 12.11.2026): в 1.21.1 атрибут — запись реестра, и <code>spell_power</code> с <code>ffitemweight</code> спокойно регистрируют свои (<code>spell_power:generic</code>, <code>spell_power:resistance.generic</code> и др.). Ограничение не в реестре, а в том, что модификатор можно вешать только на <strong>существующий</strong> атрибут.</p>
+<p>Поэтому правило: чужие атрибуты (сила заклинаний, сопротивления, броня, скорость) — используем; свои числа характеристик держим в attachment и переводим в <strong>модификаторы</strong> с <code>Identifier</code> (в 1.21 модификатор идентифицируется <code>Identifier</code>, не <code>UUID</code>). Свой атрибут регистрируем только если без него нельзя (пока таких нет). Пересчёт — по событию (трата очка, вход, респавн, reload), не каждый тик.</p>
+<h3 id="6-3-точки-подключения">6.3 Точки подключения</h3>
+<div class="table-wrap"><table><thead><tr><th>Механика</th><th>Где ловим</th></tr></thead><tbody><tr><td>Стоп бега при нуле стамины</td><td><code>ServerTickEvents.END_SERVER_TICK</code> + <code>setSprinting(false)</code></td></tr><tr><td>Расход стамины на удар</td><td><code>AttackEntityCallback</code></td></tr><tr><td>Сломанный блок</td><td><code>PlayerBlockBreakEvents.AFTER</code></td></tr><tr><td>Крит / уклонение / оглушение</td><td><code>ServerLivingEntityEvents.ALLOW_DAMAGE</code> + миксин <code>PlayerEntity#attack</code></td></tr><tr><td>Свой уровень (опыт)</td><td>свой счётчик в attachment; <strong>ванильный <code>experienceLevel</code> не трогаем</strong> (§3)</td></tr><tr><td>Смерть / респавн / вход</td><td><code>ServerPlayerEvents.AFTER_RESPAWN</code>, <code>JOIN</code></td></tr><tr><td>Обнаружение мобом</td><td>миксин <code>MobEntity#canSee</code> / сенсоры</td></tr><tr><td>Громкость шагов</td><td>миксин <code>Entity#playStepSound</code></td></tr><tr><td>Выдача рецептов</td><td><code>ServerPlayerEntity#unlockRecipes</code> по порогам интеллекта</td></tr><tr><td>Мана: начало каста</td><td>событие каста Spell Engine (<code>spell_engine</code>): нет маны — отмена каста до списания руны</td></tr><tr><td>Сила заклинаний</td><td>модификатор <code>Identifier</code> на <code>spell_power:generic</code> (§2.4)</td></tr><tr><td>Маг армор и резисты</td><td><code>spell_power:resistance.*</code> уже применяется модом; мы только вешаем модификатор на атрибут</td></tr><tr><td>Ёмкость веса</td><td>миксин в <code>CapacityHelper.getFlatBonus</code> (FFItemWeight): +бонус от силы (§5.1)</td></tr><tr><td>Слоты брюликов</td><td>API Trinkets: слоты даёт мод, окно статуса рисует их содержимое (§12.1)</td></tr><tr><td>Тип урона предмета</td><td>миксин <code>PlayerEntity#attack</code> / <code>ProjectileEntity</code>: подмена <code>DamageSource</code> по тегу оружия</td></tr><tr><td>Чистый урон</td><td>свой <code>damage_type</code> с <code>bypasses_armor</code>, <code>bypasses_effects</code> по Q-22</td></tr><tr><td>Наложение эффекта на врага</td><td>те же точки, что у крита; носитель типа урона — свой <code>damage_type</code> (§11.8.5)</td></tr></tbody></table></div>
+<h3 id="6-4-команды">6.4 Команды</h3>
+<p>Корень <strong><code>/rpg</code></strong>, не <code>/stats</code>: <code>/stats</code> уже занят ванилью (scoreboard).</p>
+<pre><code>/rpg                          — свои статы, очки, стамина
+/rpg add &lt;stat&gt; [n]           — распределить (валидация: есть свободные, стат ≤ 20)
+/rpg respec                   — сброс: предмет «Око Амнезии» (Q-6), крафта нет — лут/квест
+/rpg set &lt;player&gt; &lt;stat&gt; &lt;n&gt;  — op
+/rpg grant &lt;player&gt; &lt;n&gt;       — op
+/rpg reload                   — op, перечитать config/rpg_stats.json</code></pre>
+<hr>
+<h2 id="7-этапы">7. Этапы</h2>
+<div class="table-wrap"><table><thead><tr><th>Этап</th><th>Содержание</th><th>Проверка</th></tr></thead><tbody><tr><td>M0</td><td>каркас: <code>build.gradle</code>, <code>settings.gradle</code>, <code>gradle.properties</code>, <code>fabric.mod.json</code> (<code>environment: "*"</code>), пустой <code>/rpg</code></td><td><code>gradlew build</code> даёт jar, <code>runServer</code> стартует</td></tr><tr><td>M1</td><td><strong>ядро данных</strong>: <code>config/alarion.json</code>, парсер формул, реестр эффектов, attachment, <code>/rpg reload</code> с разбором ошибок</td><td>JUnit на парсер и загрузку конфига; reload показывает все характеристики</td></tr><tr><td>M2</td><td>прогресс: свой опыт → очки (не ванильный, §3), ранги F..K по урону (§10.2), <code>/rpg add/grant/set</code></td><td>очки и ранги переживают рестарт и смерть</td></tr><tr><td>M3</td><td>физические эффекты + связка с модами: атрибуты, стамина, крит, проворство, сила → ёмкость веса (§5.1), интеллект → <code>spell_power:generic</code> (§2.4)</td><td>удар бьёт сильнее, на нуле стамины не бежим, перегруз отодвигается</td></tr><tr><td>M4</td><td>защита и ресурсы: маг армор/резисты через <code>spell_power:resistance</code> (§11.8.2), мана и запрет каста без неё (§4), статусы и пороги L1 (§11.6), <code>damage_taken</code>, голод, реген</td><td>урон и дебаффы режутся по формулам, каст без маны не идёт</td></tr><tr><td>M5</td><td>CustomNPCs: уровень NPC, случайные статы по уровню, свой интерфейс статов NPC (§3, Q-15)</td><td>NPC сильнее, реальный урон совпадает с цифрами</td></tr><tr><td>M6</td><td>клиент: HUD <strong>скопирован с <code>rpgcore</code></strong>, «Окно статуса» <strong>вместо инвентаря</strong> (§12), выбор класса при первом входе, навыки, синк</td><td>значения на клиенте совпадают с сервером</td></tr><tr><td>v2</td><td>кинжалы и эффекты на врага (§11.8.4), свои классовые активки (§11.8.6), зацеп за уступ, числа духовно-социальных, магические стрелы</td><td>—</td></tr></tbody></table></div>
+<h2 id="8-как-проверять">8. Как проверять</h2>
+<ul></li><li><strong>Формулы — JUnit без Minecraft</strong> (<code>src/test/java</code>, <code>gradlew test</code>): чистые функции</ul>
+<p>«очки → бонус», «стамина → расход», «очки → уровень Jump Boost». Дешевле и надёжнее gametest.</p>
+<ul></li><li><strong>Живой стенд — <code>temp/mcbot/</code></strong> (единственный способ проверить серверную механику целиком:</ul>
+<p>атрибуты, actionbar, голод, урон, крит, персист). Это не юнит-тест, а прогон настоящего сервера с ботом-игроком:</p>
+<ul><ul><li><code>gradlew runServer --console=plain -Pquiet</code> (flat-мир, <code>run/</code>, offline, RCON на 25576,</li></ul></ul>
+<p>пароль <code>alarion</code>) — запускать в фоне;</p>
+<ul><ul><li><code>node temp/mcbot/test.js</code> — бот <code>Tester</code> заходит, дальше всё через RCON: статы, урон,</li></ul></ul>
+<p>стамина, очки, respec, reload; печатает <code>PASS/FAIL</code> по каждому пункту и итог <code>N/M</code>;</p>
+<ul><ul><li><code>node temp/mcbot/test.js persist</code> — второй проход после перезапуска: статы и модификаторы</li></ul></ul>
+<p>должны пережить рестарт;</p>
+<ul><ul><li><code>node temp/mcbot/stop.js</code> — мягко гасит сервер по RCON.</li></ul></ul>
+<p>Новый пункт проверки — это ещё один блок в <code>test.js</code>, а не новый инструмент.</p>
+<ul></li><li><strong>Боевой прогон — на живом сервере</strong> через moddrop (<code>/push</code> + перезапуск): урон по зомби,</ul>
+<p>уклонение от скелета, перегруз с силой, каст без маны. Пока не делался.</p>
+<ul></li><li><strong>GameTest не нужен</strong> (Q-11 снят): юниты дают формулы, бот даёт поведение; gametest добавил бы</ul>
+<p>третью инфраструктуру без новой информации.</p>
+<h2 id="9-риски-и-грабли">9. Риски и грабли</h2>
+<ol></li><li><strong>Переименование атрибутов</strong> случилось в <strong>1.21.2</strong>: на 1.21.1 константы ещё</ol>
+<p><code>GENERIC_ATTACK_DAMAGE</code> и т.п. Примеры из интернета для 1.21.4+ не соберутся.</p>
+<ol></li><li><strong><code>AttributeModifier</code> в 1.21 принимает <code>Identifier</code></strong>, не <code>UUID</code>. Старые сниппеты не компилируются.</li><li><strong>Свои атрибуты возможны</strong> (§6.2, снято 12.11.2026): регистрация в реестре работает — так</ol>
+<p>делают <code>spell_power</code> и <code>ffitemweight</code>. Ограничение другое: модификатор вешается только на <strong>существующий</strong> атрибут, поэтому свои числа живут в attachment, а на атрибуты идут модификаторы.</p>
+<ol></li><li><strong>Бег клиент-авторитетный</strong>: сервер обязан сам <code>setSprinting(false)</code>, иначе чит бегает</ol>
+<p>на пустой стамине.</p>
+<ol></li><li><strong>Урон/уклонение/крит считает только сервер.</strong></li><li><strong><code>/stats</code> занят ванилью</strong> — корень <code>/rpg</code>.</li><li><strong>Ванильный клиент = нет <code>lang</code></strong>: сообщения <code>Text.literal</code>, не <code>translatable</code> (§1).</li><li><strong>Actionbar без троттлинга</strong> = пакет на тик на игрока.</li><li><strong>Чужие моды — новая точка отказа</strong> (12.11.2026): <code>ffitemweight</code> требует вложенный</ol>
+<p><code>ffutilities</code>, <code>wizards</code> тянет семь библиотек, <code>trinkets</code> — cardinal-components. Версии обязаны совпасть на сервере и у клиента, иначе мод не поднимется. Пакет ставить целиком, версии из <code>tmp</code>. Отдельно: ёмкость веса FFItemWeight считает от <strong>ванильного</strong> <code>experienceLevel</code>, а уровень у нас свой — без миксина/синхронизации вес не вырастет (§5.1, Q-31).</p>
+<ol></li><li><strong>JDK 21 на этой машине не было</strong>: <code>java</code>/<code>javac</code> нет в PATH, <code>JAVA_HOME</code> пуст,</ol>
+<p><code>.gradle\jdks</code> пуст, в <code>Program Files</code> JDK нет. Java 21 на сервере (<code>PocketMC\runtime\java21</code>) — <strong>JRE без javac</strong>, компилировать ею нельзя (годится только для CFR). Решение: Temurin 21 <strong>JDK</strong> ставится в <code>C:\Users\zxcPap14\jdk21</code> (zip, без админа), <code>JAVA_HOME</code> — на него. Gradle wrapper 8.8 уже в кэше <code>~/.gradle/wrapper/dists</code>.</p>
+<ol></li><li><strong>Push только через moddrop</strong>: старые jar уходят в <code>.old-mods</code>, иначе Fabric видит два мода</ol>
+<p>с одним id и сервер не поднимается. Руками в <code>mods/</code> не копировать.</p>
+<ol></li><li><strong>Ритм сборок</strong>: сборка запускается один раз на этап, а не после каждой пачки файлов.<ol><ol><li><strong>Итерация</strong> — <code>gradlew build -Pquiet</code>: jar-ы кладутся в <code>build/dev/</code>, <code>build/libs/</code> не</li></ol></li></ol></ol>
+<p>трогается. moddrop смотрит только <code>build/libs</code>, поэтому промежуточные сборки не уходят ни в Telegram, ни на сервер.</p>
+<ul><ul><ul><li><strong>Версия</strong> — <code>gradlew build</code> без флага: в <code>build/libs/</code> появляется один</li></ul></li></ul></ul>
+<p><code>alarion-&lt;версия&gt;.jar</code>, moddrop его архивирует (<code>tools\moddrop\history\</code>), рассылает подписчикам и предлагает кнопку «на сервер». Номер версии меняется по вехам §7: M1 = 0.1.0, M2 = 0.2.0, M3 = 0.3.0, M4 = 0.4.0, M5 = 0.5.0, M6 = 0.6.0; патч <code>0.1.1</code> — только перевыпуск уже отданной версии.</p>
+<ul><ul><ul><li><strong>Старые версии хранятся все</strong>: <code>tools\moddrop\history\alarion-&lt;версия&gt;.jar</code> — по файлу</li></ul></li></ul></ul>
+<p>на версию, ничего не удаляется. Плюс на сервере вытесненные jar лежат в <code>mods\.old-mods\</code>.</p>
+<ul><ul><ul><li><strong>Откат</strong>:<ul><li>из Telegram: <code>/history</code> → у нужной версии кнопка «⬆ на сервер» → после неё</li></ul></li></ul></li></ul></ul>
+<p>«🔄 Перезапустить» (rcon <code>stop</code>, PocketMC поднимает сам);</p>
+<ul><ul><ul><ul><li>руками: скопировать <code>tools\moddrop\history\alarion-&lt;версия&gt;.jar</code> в</li></ul></li></ul></li></ul></ul>
+<p><code>\\192.168.0.14\C$\Users\zxc1\Documents\PocketMC\servers\axiom\mods\</code>, текущий <code>alarion-*.jar</code> убрать в <code>.old-mods</code>, перезапустить сервер (Fabric читает jar только при старте).</p>
+<ul><ul><ul><li>Осторожно: <code>-Pdev</code> — <strong>зарезервированное имя Loom</strong>, для тихой сборки используется</li></ul></li></ul></ul>
+<p><code>-Pquiet</code>; иначе Loom сам меняет имя артефакта на <code>alarion-&lt;версия&gt;-dev.jar</code>.</p>
+<ul><ul><ul><li><code>remapJar</code> перед записью удаляет из целевой папки прежние <code>alarion-*.jar</code>: в <code>build/libs</code></li></ul></li></ul></ul>
+<p>всегда ровно один jar, поэтому moddrop не путает версии.</p>
+<ol></li><li><strong>На машине сервера (192.168.0.14) собирать нельзя, и удалённо тоже</strong>:<ol><ol><li>открыты только 135/445 (SMB) и 26666 (Minecraft); SSH 22, WinRM и RCON 25575 закрыты,</li></ol></li></ol></ol>
+<p><code>schtasks /s</code> → «отказано в доступе». Значит исполнять команды там нельзя — только файлы через шару <code>C$</code>;</p>
+<ul><ul><ul><li>единственный JDK там <strong>26</strong> (<code>C:\Program Files\Java\jdk-26.0.2.1</code>), Gradle отсутствует;</li></ul></li></ul></ul>
+<p>Gradle 8.8 с JDK 26 несовместим;</p>
+<ul><ul><ul><li>итог: сборка и тесты — на этой машине (<code>temp/mcbot</code>), на сервер попадает только готовый jar.</li></ul></li></ul></li><li><strong>RCON на живом сервере фактически не работает</strong>: в <code>server.properties</code> он включён</ul>
+<p>(<code>enable-rcon=true</code>, порт 25575), но порт не слушается — сервер после правки конфига не перезапускался. Пока так, <code>/push</code> в moddrop работает, а кнопка «🔄 Перезапустить» и любые RCON-команды — нет. Лечится перезапуском сервера вручную у хостинга.</p>
+<h2 id="10-три-класса-характеристик-спека-11-11-2026">10. Три класса характеристик (спека 11.11.2026)</h2>
+<p>Состав и механика роста. §2 остаётся источником бонусов физических характеристик.</p>
+<p>Слово «класс» здесь значит <strong>группу характеристик</strong> (физические / защитные / духовные), а не архетип персонажа. Архетип («класс персонажа» из §11.8.1 и §12.2) — другое: он даёт надбавку к характеристикам, хп и набор активок. В конфиге группы называются <code>group</code>, чтобы не путать.</p>
+<h3 id="10-1-физические-5">10.1 Физические — 5</h3>
+<p>Сила, Ловкость, Интеллект, Выносливость, Проворство (§2.1–2.5).</p>
+<ul></li><li>Растут <strong>очками</strong> (потолок 70 на характеристику, §3.2) <strong>и автоматически</strong> на +0.1 за каждый</ul>
+<p>новый уровень — значит значение дробное: <code>allocated + 0.1 × (level − 1)</code>.</p>
+<ul></li><li>Очки только сюда: 240 очков к 150-му уровню против 350 мест (5 × 70), специализация обязательна.</ul>
+<h3 id="10-2-защитные-3-ранги-f-k">10.2 Защитные — 3, ранги F..K</h3>
+<p>Упорство, Самообладание, Выдержка. Растут <strong>не очками, а опытом за взаимодействие</strong>: 10 рангов F..K вместо дискретных очков.</p>
+<div class="table-wrap"><table><thead><tr><th>Характеристика</th><th>Опыт за</th><th>Бонус за ранг (F=1 … K=10)</th></tr></thead><tbody><tr><td>Упорство</td><td>полученный физический урон</td><td>−6 % длительности дебаффов; −7 % силы замедления; +0.08 сопротивления отбрасыванию (<strong>бонус брони удалён</strong> 12.11.2026)</td></tr><tr><td>Самообладание</td><td>полученный магический урон</td><td>−4 % магического урона; −5 % длительности аномальных эффектов; +8 % шанс не получить дебафф; +1 % к порогу критического здоровья</td></tr><tr><td>Выдержка</td><td>магический/природный урон</td><td>+0.01 к регенерации голода; −4 % расхода голода; −2 % расхода стамины</td></tr></tbody></table></div>
+<p>Пороги (Q-16, 12.11.2026) — <strong>на каждый переход</strong>, счётчик обнуляется достигнутым рангом, <strong>1 единица полученного урона = 1 прогресс</strong>:</p>
+<div class="table-wrap"><table><thead><tr><th>Переход</th><th>Нужно</th></tr></thead><tbody><tr><td>F → E</td><td>800</td></tr><tr><td>E → D</td><td>1 600</td></tr><tr><td>D → C</td><td>2 400</td></tr><tr><td>C → B</td><td>3 200</td></tr><tr><td>B → A</td><td>4 000</td></tr><tr><td>A → S</td><td>7 000</td></tr><tr><td>S → SS</td><td>9 000</td></tr><tr><td>SS → SSS</td><td>9 900</td></tr><tr><td>SSS → K</td><td>11 000</td></tr><tr><td>итого F → K</td><td>48 900</td></tr></tbody></table></div>
+<p>Отдельного «опыта» после A больше нет: все девять переходов растут от полученного урона, своего счётчика у каждой характеристики. Пример: апнул F→E на 800 — счётчик сброшен, до D нужно уже 1 600. Пороги лежат в конфиге, чтобы менять их без пересборки; <code>ranks</code> в <code>default-config.json</code> сейчас накопительные (<code>[0,800,1700,…]</code>) и <strong>этому противоречат</strong> — переписать на пороги-переходы (Д-1). Статусный («магический») урон считается с множителем <code>1 + 0.2 × номер ранга</code>.</p>
+<p>Часть механик, на которые ложатся эти бонусы, уже есть в <code>spell_engine</code> (<code>stun</code>, <code>immobilize</code>, <code>bleed</code>); ожог, отравление, нокдаун и пороги L1 — наши (§11.6).</p>
+<h3 id="10-3-духовно-социальные-3-скрытые-q-14-13-11-2026">10.3 Духовно-социальные — 3, скрытые (Q-14, 13.11.2026)</h3>
+<p><strong>Проницательность, Достоинство, Мужество</strong> — и только они (придуманные ранее Харизма, Вера, Интуиция, Репутация, Вдохновение, Контроль <strong>удалены</strong>). Те же три, что закрыты в §12.5: сейчас не видны и не растут, <code>kind: locked</code> с пустым списком эффектов, чтобы включить их позже правкой конфига, а не кода. Открытие — «100 опыта в своей сфере», что это за сфера, будет расписано позже (Q-35).</p>
+<hr>
+<h2 id="11-архитектура-характеристики-как-данные">11. Архитектура: характеристики как данные</h2>
+<p>Требование: добавить, убрать или переписать характеристику — правкой JSON, без пересборки. Поэтому код знает только <strong>виды эффектов</strong> и <strong>вид прогресса</strong>; всё остальное — данные.</p>
+<h3 id="11-1-три-слоя">11.1 Три слоя</h3>
+<ol></li><li><strong>Прогресс</strong> — как характеристика растёт. <code>kind</code>:<ol><li><code>allocated</code> — очки распределяет игрок (физические);</li><li><code>rank</code> — ранги по опыту, опыт начисляет источник-событие (защитные);</li><li><code>locked</code> — не видна и не растёт, пока не открыта (духовные).</li></ol></ol>
+<p>Состояние игрока одинаково для всех видов: <code>{points:int, xp:long}</code>, по id характеристики. Вид влияет только на то, что такое <code>level</code> и что игроку разрешено менять.</p>
+<ol></li><li><strong>Эффекты</strong> — список записей <code>{"effect": "&lt;тип&gt;", ...параметры, "formula": "..."}</code>.</li><li><strong>Формула</strong> — строка-выражение, а не код.</ol>
+<h3 id="11-2-формулы">11.2 Формулы</h3>
+<p>Переменные: <code>level</code> (значение характеристики — <strong>дробное</strong>, <code>allocated + 0.1 × (level персонажа − 1)</code> для физических, 1..10 для защитных), <code>rank</code>, <code>points</code>, <code>xp</code>, <code>max</code>, <code>now</code>. Операции: <code>+ − * / %</code>, скобки, <code>min/max/clamp/floor/ceil/round</code>, <code>if(условие,a,b)</code>, сравнения. Свой парсер рекурсивным спуском (~150 строк, без зависимостей), результат кэшируется до изменения статов или <code>/rpg reload</code>.</p>
+<p>Ошибка в формуле не валит сервер: эффект не применяется, в лог и в ответ <code>/rpg reload</code> идёт <code>id характеристики / id эффекта / текст ошибки</code>. Ошибка загрузки целиком — действует <strong>предыдущий конфиг</strong>, а не пустой.</p>
+<h3 id="11-3-реестр-эффектов">11.3 Реестр эффектов</h3>
+<div class="table-wrap"><table><thead><tr><th><code>effect</code></th><th>параметры</th><th>смысл</th></tr></thead><tbody><tr><td><code>attribute</code></td><td><code>attribute</code>, <code>operation</code></td><td>модификатор ванильного атрибута через <code>Identifier</code></td></tr><tr><td><code>damage_taken</code></td><td><code>source</code></td><td>множитель входящего урона (<code>any/physical/magic/pure/anomaly/nature/npc</code>); <code>magic</code> = тег <code>c:is_magic</code> (все школы <code>spell_power</code>)</td></tr><tr><td><code>damage_dealt</code></td><td><code>kind</code></td><td>множитель исходящего урона (<code>melee/ranged/all</code>)</td></tr><tr><td><code>chance</code></td><td><code>channel</code></td><td>шанс 0..1 в канале: <code>knockback/stun/crit/dodge/debuff_immunity</code></td></tr><tr><td><code>multiplier</code></td><td><code>channel</code></td><td>множитель канала: <code>stamina_cost/debuff_duration/slow/hunger_drain/...</code></td></tr><tr><td><code>value</code></td><td><code>channel</code></td><td>абсолютное значение канала: <code>stamina_max/stamina_regen/jump_boost/recipes/mana_max/mana_regen/...</code></td></tr><tr><td><code>flag</code></td><td><code>name</code></td><td>число-флаг для других систем</td></tr></tbody></table></div>
+<p>Шесть типов, а не двадцать: механика выбирается <strong>каналом</strong>, а не новым типом. Канал, которого код ещё не знает, — не ошибка: эффект инертен, при загрузке пишется предупреждение. Поэтому новая характеристика или новая механика приезжают данными, а новый <strong>тип</strong> эффекта (то есть новый способ влиять на игру) — единственное, что требует класса-applier'а.</p>
+<p><strong>Как вклады нескольких характеристик складываются в одно число (реализовано в <code>StatSheet</code>):</strong></p>
+<div class="table-wrap"><table><thead><tr><th>тип</th><th>сложение вкладов</th><th>значение по умолчанию</th></tr></thead><tbody><tr><td><code>value</code></td><td>сумма</td><td>—</td></tr><tr><td><code>multiplier</code></td><td>произведение</td><td>1 (без изменений)</td></tr><tr><td><code>chance</code></td><td>сумма, обрезка по 0..1</td><td>0</td></tr><tr><td><code>flag</code></td><td>логическое ИЛИ (любое ≠ 0)</td><td>выключен</td></tr></tbody></table></div>
+<p>Отсюда правило для автора конфига: абсолютное значение (<code>stamina_max = 100 + level*4</code>) задаётся <strong>одной</strong> характеристикой; если их станет две, база сложится дважды.</p>
+<p><code>damage_taken source=magic</code> — не отдельный тип урона, а <strong>тег</strong>: магия приходит типами <code>spell_power:fire|frost|arcane|…</code> с тегом <code>c:is_magic</code>. Свой тип делаем только для чистого урона (<code>alarion:pure</code> + <code>bypasses_armor</code>, Q-22).</p>
+<h3 id="11-4-порядок-применения">11.4 Порядок применения</h3>
+<ol></li><li>атрибуты складываются штатно; при пересчёте текущее HP клампится к новому максимуму;</li><li>множители урона перемножаются, общий потолок — <code>caps.damage_reduction</code>;</li><li>шансы (иммунитет, уклонение) — независимые броски, каждый со своим потолком в <code>caps</code>. При</ol>
+<p>этом <code>chance</code>-каналы разных характеристик <strong>суммируются</strong> до общего шанса события, а не бросаются по отдельности.</p>
+<p>Так снимается вопрос «80 % иммунитета + 50 % снижения + 60 % маг.резиста = бессмертие»: это данные, а не код.</p>
+<h3 id="11-5-хранение">11.5 Хранение</h3>
+<p>Fabric Data Attachment <code>alarion:stats</code>: <code>version</code> + <code>map&lt;id, {points, xp}&gt;</code> + <code>unspent</code> + <strong>свой прогресс</strong>: <code>level</code>, <code>level_xp</code>, <code>mana</code>, <code>last_rank_xp</code> — плюс <code>copyOnDeath</code>. <code>points</code> в записи — <strong>целые</strong> вложенные очки; значение характеристики считается на лету как <code>points + 0.1 × (level − 1)</code> (§3.2) и только оно уходит в формулы. Хранить дробь не нужно: уровень и так в состоянии, пересчёт детерминирован и одинаков до и после релога. Ванильный <code>experienceLevel</code> не храним и не трогаем (§3): иначе опыт зачарований и alarion начнут спорить за одно число. Новая характеристика в конфиге у старых игроков начинается с нулей — миграция не нужна.</p>
+<h3 id="11-6-статусы-что-берём-готовым-что-своё">11.6 Статусы — что берём готовым, что своё</h3>
+<div class="table-wrap"><table><thead><tr><th>Статус</th><th>Реализация</th></tr></thead><tbody><tr><td><code>stun</code></td><td>готовый эффект <strong><code>spell_engine:stun</code></strong> («Cannot move or act») — свой не пишем</td></tr><tr><td><code>immobilize</code> / нокдаун</td><td><strong><code>spell_engine:immobilize</code></strong> («Cannot move or jump»); L1 добавляет свои правила ниже</td></tr><tr><td><code>bleed</code></td><td><strong><code>spell_engine:bleed</code></strong> («Losing health over time, worse while moving») — чистый урон мимо защиты (Q-13)</td></tr><tr><td><code>burn</code></td><td>свой DoT, несёт <strong>магический</strong> тип (режется маг армором)</td></tr><tr><td><code>poison</code></td><td>ванильный яд, урон правим под маг защиту</td></tr><tr><td><code>knockdown</code></td><td>запрет действий на N тиков (§L1)</td></tr></tbody></table></div>
+<p>Правило типов от Q-13: кровотечение — <strong>чистый</strong> урон мимо защиты, ожог — <strong>магический</strong> (маг армор влияет), яд — ванильный, но на его урон влияет маг защита. DoT обязан нести тип урона, иначе «чистый» не отличить от обычного (§11.8.3).</p>
+<p><strong>L1: пороги на разовый урон.</strong> Считается по одному удару, в процентах от <strong>максимального</strong> хп:</p>
+<div class="table-wrap"><table><thead><tr><th>Условие</th><th>Эффекты</th><th>Длительность</th></tr></thead><tbody><tr><td>удар &gt; 50 % хп</td><td>Ошеломление (управление инвертировано), Слепота II, Слабость VI, Замедление V</td><td>10 с, <strong>сокращается</strong> характеристиками (<code>debuff_duration</code>)</td></tr><tr><td>удар &gt; 90 % хп</td><td>«На грани смерти» (двигаться нельзя), Слепота IV, Слабость X, Замедление VIII</td><td>до восстановления хп выше <strong>30 %</strong>, <strong>не сокращается</strong></td></tr></tbody></table></div>
+<p>«Ошеломление» — инверсия ввода, делаем <strong>сами</strong> (Q-29): свой эффект + клиентский миксин на <code>KeyboardInput</code>, сервер только накладывает эффект. Ступени эффектов — как в ТЗ: «Слабость 6» = <code>amplifier 6</code> (из кода ванильный эффект держит любое значение, ограничение 255 есть только у команды <code>/effect</code>); проверить на живом стенде, чтобы ступени читались как задумано.</p>
+<p><strong>Перекрытие (Q-36):</strong> удар, снявший больше 90 % хп, попадает в оба порога — накладываются <strong>оба набора сразу</strong>. По каждому общему эффекту верх берёт сильная ступень (Слепота IV, Слабость X, Замедление VIII), «Ошеломление» и «на грани смерти» действуют одновременно, а длительность каждого набора считается по своим правилам. Пороги L1 живут в конфиге, как и всё остальное.</p>
+<h3 id="11-7-клиент-и-синхронизация">11.7 Клиент и синхронизация</h3>
+<p>Один jar на обе стороны. Сервер при входе и после <code>/rpg reload</code> отдаёт клиенту список характеристик с текущими значениями (payload); клиент рисует HUD и экраны <strong>из этого</strong>, а не из своего конфига — иначе клиент и сервер разойдутся при правке JSON.</p>
+<hr>
+<h3 id="11-8-боевая-модель-ресурсы-защита-урон-оружие">11.8 Боевая модель: ресурсы, защита, урон, оружие</h3>
+<p>Сведено из присланной карты зависимостей (постер <code>Group 7.svg</code>, расшифровка и навигация — <code>MAP.md</code>; текстовая версия узлов прислана отдельно и её уточнения учтены). Карта задаёт <strong>структуру</strong>: что во что втекает. Чисел в ней нет — числа либо уже есть в §2, либо это вопросы §13. Хаб — характеристики (§2, §10), от него четыре ветки.</p>
+<p>Правило чтения: стрелка значит «влияет на / питает», а не «наследует». Всё, что ниже, — это <strong>каналы и слои</strong>, а не новый код: код по-прежнему знает только виды эффектов (§11.3).</p>
+<h4 id="11-8-1-ресурсы">11.8.1 Ресурсы</h4>
+<div class="table-wrap"><table><thead><tr><th>Ресурс</th><th>Входы из карты</th><th>Состояние в спеке</th></tr></thead><tbody><tr><td>хп</td><td>класс, уровень персонажа, брюлики</td><td>нет: хп ванильное, ни один вход не описан (§4)</td></tr><tr><td>мана</td><td>интеллект, брюлики, класс <strong>через статы</strong></td><td><strong>есть</strong>: свой пул, тратится на каст, без маны каст не идёт (§4)</td></tr><tr><td>стамина</td><td>выносливость</td><td>реализовано (§2.2)</td></tr></tbody></table></div>
+<p>Правила:</p>
+<ul></li><li>хп двигается только модификатором <code>minecraft:generic.max_health</code>; после пересчёта текущее HP</ul>
+<p>клампится к новому максимуму (§11.4);</p>
+<ul></li><li><strong>класс ману не даёт.</strong> Он даёт характеристики, а ману дают характеристики:</ul>
+<p><code>класс → статы → мана</code>. По той же логике класс может давать хп, но не ману напрямую;</p>
+<ul></li><li><strong>сток маны — каст заклинаний</strong> (12.11.2026, Q-4): проверка и списание наши, потому что у</ul>
+<p>модов магии маны нет (§4). Нет маны — каст не начинается, руна не тратится;</p>
+<ul></li><li>брюлики (Trinkets: 4 кольца + амулет) — источник хп, маны, резистов и эффектов; это предметы,</ul>
+<p>а не характеристика (Q-25).</p>
+<h4 id="11-8-2-защита-три-слоя">11.8.2 Защита: три слоя</h4>
+<div class="table-wrap"><table><thead><tr><th>Слой</th><th>Чем является в спеке</th><th>Источники</th></tr></thead><tbody><tr><td>физ армор</td><td>ванильный <code>minecraft:generic.armor</code></td><td>экип (броня)</td></tr><tr><td>маг армор</td><td>модификатор атрибута <strong><code>spell_power:resistance.generic</code></strong> (и по школам)</td><td>экип (броня), пассивки, брюлики</td></tr><tr><td>резисты</td><td>каналы <code>multiplier/debuff_duration</code> + <code>chance/debuff_immunity</code></td><td>экип (броня), пассивки, брюлики</td></tr></tbody></table></div>
+<ul></li><li>Маг армор <strong>не считаем сами</strong> (правка 12.11.2026, Q-21): <code>spell_power</code> уже реализует</ul>
+<p><code>SpellResistance.resist()</code> — кривая <code>LINEAR/QUADRATIC/HYPERBOLIC</code>, множитель и кап (<code>resistance_reduction_cap</code>). Наш вклад — только модификатор атрибута от статов и брони.</p>
+<ul></li><li>«Резисты» — не новый стат, а <strong>сокращение длительности</strong> наложенного эффекта (Q-21, Q-13):</ul>
+<p><code>debuff_duration</code> для обычных дебаффов + <code>debuff_immunity</code> как шанс не получить его вовсе.</p>
+<ul></li><li>Пассивки дают маг армор и резисты через ту же систему эффектов §11.3 — отдельного кода на навык</ul>
+<p>нет (§12.4), механика приходит данными.</p>
+<ul></li><li>Броня как источник статов — свойство <strong>предмета</strong> (в 1.21.1 <code>attribute_modifiers</code>), а не</ul>
+<p>характеристика; в спеку входит только вместе со своими предметами (Q-25).</p>
+<ul></li><li>Общий потолок снижения — <code>caps.damage_reduction</code> (§11.4); кап сопротивления — в конфиге мода.</ul>
+<h4 id="11-8-3-три-типа-урона">11.8.3 Три типа урона</h4>
+<div class="table-wrap"><table><thead><tr><th>Тип</th><th>Чем режется</th><th>Откуда берётся в 1.21.1</th></tr></thead><tbody><tr><td>физ</td><td><code>generic.armor</code>, <code>damage_taken source=physical</code></td><td><code>player_attack</code>, стрела</td></tr><tr><td>маг</td><td>маг армор (<code>spell_power:resistance</code>), <code>source=magic</code></td><td><strong><code>spell_power</code>/<code>spell_engine</code></strong>: типы <code>spell_power:*</code> с тегом <code>c:is_magic</code></td></tr><tr><td>чист</td><td><strong>ничем</strong>: ни брони, ни сопротивлений, ни эффектов</td><td><strong>свой</strong> <code>damage_type</code> <code>alarion:pure</code> + <code>bypasses_armor</code> (Q-22)</td></tr></tbody></table></div>
+<p>Магический урон мы <strong>не заводим</strong> (Q-22/§11.3): он уже есть у чужого мода и делится по школам, снижение делает <code>SpellResistance</code>. Свой тип нужен только чистому — он идёт мимо всего, включая маг защиту, и бьёт прямо в здоровье. <code>damage_taken.source</code> (§11.3) получает <code>pure</code>; <code>anomaly</code> и <code>nature</code> — не типы урона оружия, а пометка источника для опыта защитных характеристик (§10.2).</p>
+<h4 id="11-8-4-оружие-тип-урона">11.8.4 Оружие → тип урона</h4>
+<p>Тип урона — свойство <strong>предмета</strong>, а не игрока: у ванили урон один (<code>player_attack</code>).</p>
+<div class="table-wrap"><table><thead><tr><th>Оружие</th><th>Урон из карты</th><th>Как в игре (12.11.2026)</th></tr></thead><tbody><tr><td>меч</td><td>физ</td><td>ванильный <code>player_attack</code>, ничего не делаем</td></tr><tr><td>лук</td><td>физ</td><td>ванильная стрела</td></tr><tr><td>посох</td><td>маг</td><td>предмет <code>wizards</code> (Spell Engine): урон = школа заклинания, своего типа урона нет</td></tr><tr><td>кинжал</td><td>база физ; маг <strong>или</strong> чист — через эффект, а не тип предмета</td><td><strong>добавляется позже</strong> (v2), контент свой</td></tr></tbody></table></div>
+<ul></li><li><strong>Посох ничего не требует от нас</strong>: посохи Wizards уже бьют заклинаниями с уроном по школе</ul>
+<p>(<code>spell_power_coefficient</code>), а ману и интеллект мы добавляем сверху (§4, §2.4).</p>
+<ul></li><li><strong>Кинжал не делит урон на три типа</strong>: база физическая, маг/чист добавляет <strong>эффект на цель</strong></ul>
+<p>(§11.8.5), поэтому чистый урон живёт в статусах, а не в <code>damage_type</code> предмета. Кинжалов в ванили и в сборке нет — это свой контент и v2 (Q-23).</p>
+<ul></li><li>Теги <code>#alarion:magic_weapons</code> / <code>#alarion:pure_weapons</code> для чужих предметов остаются запасным</ul>
+<p>путём, но для посохов они больше не нужны.</p>
+<h4 id="11-8-5-эффект-на-врага">11.8.5 Эффект на врага</h4>
+<p>Общий слой «наложить эффект» (§11.6), а не свойство кинжала: накладывают кинжал, посох, активки. Эффект несёт свой тип урона — <strong>чистый</strong> (кровотечение, кинжальный DoT) или <strong>магический</strong> (ожог) — и потому это единственное место, где кинжал получает «маг или чист» (Q-13, Q-23). Кинжал как предмет — v2; слой эффектов нужен раньше, он же обслуживает заклинания.</p>
+<h4 id="11-8-6-активки">11.8.6 Активки</h4>
+<p><code>класс → классовые активки → {баф, урон, хил}</code>; урон-активки дают физ, маг или чист урон.</p>
+<p>Кулдаун и трата маны решены (Q-26, 12.11.2026): <strong>кулдаун уже есть в движке заклинаний</strong> (<code>cost.cooldown</code>), а ману и её списание добавляем мы (§4). Свои классовые активки — v2, и это единственный сток маны, кроме каста. Способности приезжают данными в ту же систему эффектов §11.3: у активки нет своего кода, у неё есть свой <strong>тип применения</strong>.</p>
+<h4 id="11-8-7-что-карта-оставляет-открытым">11.8.7 Что карта оставляет открытым</h4>
+<ul></li><li>числа хп от класса и уровня (сейчас есть только <code>mana_max</code> от интеллекта, §2.4);</li><li>числа маны: пул, реген, цена каста (Q-28);</li><li>что режет чистый урон, кроме собственных флагов типа (Q-22 — по ТЗ не режет ничего);</li><li>чем задаётся класс и что именно он даёт: надбавку к характеристикам, лишние очки, только</ul>
+<p>название в окне статуса (Q-24: выбор при первом входе, развитие через NPC; состав — открыт);</p>
+<ul></li><li>как именно сила увеличивает ёмкость веса (миксин или синхронизация уровня, Q-31).</ul>
+<h4 id="11-8-8-что-это-значит-для-кода">11.8.8 Что это значит для кода</h4>
+<p>Новых классов почти не требуется: маг армор стал модификатором чужого атрибута, магия — чужими атрибутами и уроном, вес и слоты — чужими модами. Новый <strong>код</strong> нужен там, где механики нет ни у кого: своя мана и проверка каста, свой опыт и уровень, свой чистый <code>damage_type</code>, пороги L1, свой интерфейс статов NPC и окно статуса (вместо инвентаря).</p>
+<hr>
+<h2 id="12-интерфейс-окно-статуса-макет-11-11-2026">12. Интерфейс: «Окно статуса» (макет 11.11.2026)</h2>
+<p>Открывается <strong>вместо ванильного инвентаря</strong>, по той же клавише «E» (в русской раскладке «У»). Три зоны: слева персонаж, в центре окно статуса, справа описание.</p>
+<h3 id="12-1-слева-зона-персонажа">12.1 Слева: зона персонажа</h3>
+<ul></li><li>по центру — полноростовая <strong>3D-модель</strong> персонажа (живая модель со скином и экипировкой,</ul>
+<p>не иконка);</p>
+<ul></li><li>слева от модели — вертикальный ряд из <strong>четырёх квадратных слотов</strong>: шлем, нагрудник,</ul>
+<p>штаны, ботинки — остаются (Q-19);</p>
+<ul></li><li>под моделью на макете два слота; по факту их <strong>пять</strong>: 4 кольца + амулет (Trinkets, Q-25,</ul>
+<p>12.11.2026). Макет надо расширить до пяти, иначе брюлики некуда девать;</p>
+<h3 id="12-2-центр-окно-статуса">12.2 Центр: окно статуса</h3>
+<ul></li><li>заголовок по центру: <strong>«Окно статуса»</strong>;</li><li>ниже две строки-поля: «Класс: …», «Титул: …». Класс выбирается <strong>при первом входе</strong> отдельным</ul>
+<p>окном и потом развивается через NPC (Q-24); титул пока отсутствует — титулы выдаются за цепочки квестов и заслуги, ни одного ещё не заведено (Q-18);</p>
+<ul></li><li>основная часть — две колонки:<ul><li><strong>левая карточка</strong>: имя (на макете <code>character</code>), строка «Уровень: N», под ней список</li></ul></ul>
+<p>базовых характеристик со значением и кнопкой «+»: Сила, Выносливость, Ловкость, Интеллект, Проворство. «+» тратит неиспользованное очко — то же, что <code>/rpg allocate</code>;</p>
+<ul><ul><li><strong>правая область</strong>: неиспользованные очки <strong>золотым</strong> — «2 Неиспользованных очка».</li></ul></ul>
+<p>Это единственная золотая подсветка в окне, она и есть индикатор «есть куда вкладывать»;</p>
+<ul></li><li>в самом низу центрального окна — горизонтальная лента со **всеми стартовыми пассивными</ul>
+<p>навыками**, у каждого ранг в скобках, изначально <code>[F]</code>; выбранный обведён рамкой (на макете — «Достоинство [F]»).</p>
+<h3 id="12-3-справа-панель-описание">12.3 Справа: панель «Описание»</h3>
+<p>Сверху вниз:</p>
+<ol></li><li>название выбранного навыка с рангом — «Достоинство [F]»;</li><li>художественный (лорный) текст — от лица мира, не сухие числа;</li><li>маркированный список конкретных эффектов навыка с числами.</ol>
+<p>Панель показывает то, что выделено в нижней ленте; отдельного экрана у навыка нет.</p>
+<h3 id="12-4-что-из-этого-следует-для-кода">12.4 Что из этого следует для кода</h3>
+<ul></li><li>Окно — клиентский <code>Screen</code>. Инвентарь <strong>заменяется целиком</strong> (Q-19): 2×2 крафта нет, слоты</ul>
+<p>брони и пять слотов Trinkets живут в этом окне, а ванильный инвентарь (рюкзак) открывается отдельным экраном по кнопке оттуда.</p>
+<ul></li><li><strong>HUD копируется с <code>rpgcore-1.0.0</code></strong> (12.11.2026): полосы хп/стамины/маны, иконки эффектов,</ul>
+<p>настраиваемое положение — берём как эталон, не изобретаем. Из <code>rpgcore</code> <strong>не берём</strong> подмену инвентаря: у нас она своя (§12.4).</p>
+<ul></li><li>Всё на экране (включая золотые очки) приходит из пакета синка §11.7; клиент сам не считает</ul>
+<p>ничего, кроме анимации. Иначе клиент и сервер разойдутся при правке JSON.</p>
+<ul></li><li>Навыки — новый тип данных в конфиге: <code>id</code>, имя, ранг, лор, список эффектов. Серверная часть —</ul>
+<p>та же система эффектов §11, отдельного кода на навык быть не должно.</p>
+<ul></li><li>Класс и титул — новые поля состояния игрока (сейчас их нет вообще).</li><li>Этап M6 (§7): HUD стамины, это окно, синк. До синка окно рисовать не из чего.</ul>
+<h3 id="12-5-навыки-кто-есть-кто-q-17-12-11-2026">12.5 Навыки: кто есть кто (Q-17, 12.11.2026)</h3>
+<p>Стартовые пассивки — те же три защитные характеристики, отдельного списка нет:</p>
+<div class="table-wrap"><table><thead><tr><th>Навык</th><th>Статус</th></tr></thead><tbody><tr><td>Упорство <code>[F]</code></td><td>стартовый, растёт от физического урона (§10.2)</td></tr><tr><td>Самообладание <code>[F]</code></td><td>стартовый, растёт от магического урона</td></tr><tr><td>Выдержка <code>[F]</code></td><td>стартовая, растёт от магического/природного урона</td></tr><tr><td>Проницательность</td><td><strong>закрыт</strong>: это и есть духовно-социальная группа (§10.3); нужно 100 опыта в своей сфере</td></tr><tr><td>Достоинство</td><td>закрыт, те же условия</td></tr><tr><td>Мужество</td><td>закрыт, те же условия</td></tr></tbody></table></div>
+<p>Закрытая тройка пока <strong>не проектируется</strong> — отложена (Q-35). Самопознание и Самобытность с макета <strong>удалены</strong>: Q-30 закрыт ответом на Q-14, духовных ровно три.</p>
+<p>Бонусы Упорства по рангам (Q-17.3), подтверждено: −6 % длительности дебаффов за ранг, −7 % силы замедления за ранг, +0.08 сопротивления отбрасыванию за ранг (K = −60 % / −70 % / 0.8). Броня из бонусов Упорства удалена.</p>
+<h3 id="12-6-макет-для-figma">12.6 Макет для Figma</h3>
+<p><code>design/status-window.svg</code> — отдельный документ, не часть мода: чистые векторы и текст, без растровых вставок, поэтому <strong>импортируется в Figma как есть</strong> (<code>File → Place image</code> или drag-and-drop в холст; каждая зона — именованная группа: <code>zone-character</code>, <code>status-window</code>, <code>description-panel</code>, <code>spec</code>). Холст 1280×720, все размеры и палитра продублированы сноской в группе <code>spec</code> — её можно скрыть и получить чистый экран.</p>
+<p>Что в макете — заглушки и подлежит замене при утверждении: два нижних слота → пять (Q-25), поле класса → выбор при первом входе (Q-24), лента пассивок → три стартовых (Q-17), пиксельный шрифт Minecraft (в Figma подставляется Segoe UI, шрифт надо подключить отдельно).</p>
+<hr>
+<h2 id="13-открытые-вопросы">13. Открытые вопросы</h2>
+<p>Реестр. Развёрнутые формулировки, варианты ответов и производные вопросы (Д-…) — в <code>QUESTIONS.md</code>; решения записываются сюда.</p>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Вопрос</th><th>Решение (13.11.2026)</th><th>Этап</th></tr></thead><tbody><tr><td>Q-2</td><td>Источник очков</td><td><strong>свой опыт</strong> (не ванильный) + квесты CustomNPCs; NPC получают уровень и случайные статы (§3)</td><td>M1</td></tr><tr><td>Q-3</td><td>Качество зачарований</td><td><strong>снят</strong>: механики нет</td><td>—</td></tr><tr><td>Q-4</td><td>Чем тратить ману</td><td><strong>каст заклинаний</strong>: нет маны — каста нет; мана своя, у модов её нет (§4)</td><td>M1 (HUD)</td></tr><tr><td>Q-5</td><td>Система веса</td><td><strong>FFItemWeight</strong>; сила увеличивает максимум веса через миксин (§5.1)</td><td>M2</td></tr><tr><td>Q-6</td><td><code>respec</code></td><td>предмет <strong>«Око Амнезии»</strong>, крафта нет — лут/награда квеста (Q-33); возвращает <strong>все</strong> потраченные очки</td><td>M1</td></tr><tr><td>Q-7</td><td>PvP</td><td>урон по игрокам считается как по NPC — от их защиты</td><td>M2</td></tr><tr><td>Q-13</td><td>Статусы v1</td><td>bleeding — чистый мимо защиты; burn — магический; poison — ванильный + маг защита; stun/knockdown — L1</td><td>M1</td></tr><tr><td>Q-14</td><td>Духовно-социальные</td><td><strong>ровно три</strong>: Проницательность, Достоинство, Мужество; придуманные шесть удалены (§10.3)</td><td>M6</td></tr><tr><td>Q-15</td><td>Статы NPC</td><td>свой интерфейс в CustomNPCs по образцу механики уровня игрока; поля уточнить на M5</td><td>M5</td></tr><tr><td>Q-16</td><td>Пороги A..K</td><td><strong>1 урон = 1 прогресс</strong>, счётчик сбрасывается каждым рангом (§10.2)</td><td>M4</td></tr><tr><td>Q-17</td><td>Пассивные навыки</td><td>стартовые Упорство/Самообладание/Выдержка <code>[F]</code>; закрытая тройка = духовные (§12.5)</td><td>M6</td></tr><tr><td>Q-18</td><td>Класс и титул</td><td>титул — за квесты/заслуги, пока ни одного; класс — выбор при входе + развитие через NPC</td><td>M6</td></tr><tr><td>Q-19</td><td>Замена инвентаря</td><td>2×2 удалён; броня остаётся в окне; рюкзак отдельным экраном</td><td>M6</td></tr><tr><td>Q-20</td><td>«+» в окне</td><td><strong>с подтверждением</strong> отдельным окном поверх</td><td>M6</td></tr><tr><td>Q-21</td><td>Маг армор и резисты</td><td>маг армор режет урон заклинаний (<code>spell_power:resistance</code>), резисты — <strong>длительность</strong> эффекта (§11.8.2)</td><td>M4</td></tr><tr><td>Q-22</td><td>Чистый урон</td><td>свой <code>damage_type</code>, игнорирует <strong>все</strong> сопротивления, бьёт по здоровью (§11.8.3)</td><td>v2</td></tr><tr><td>Q-23</td><td>Посох и кинжал</td><td>посохи — из Wizards (школа заклинания), кинжалы — свои позже, маг/чист через эффект (§11.8.4)</td><td>v2</td></tr><tr><td>Q-24</td><td>Класс персонажа</td><td>выбор при первом заходе, развитие ветви через NPC; состав ветвей — Q-32 (отложен)</td><td>M6</td></tr><tr><td>Q-25</td><td>Брюлики</td><td><strong>Trinkets</strong>: 4 кольца + амулет = 5 слотов (§12.1)</td><td>M6</td></tr><tr><td>Q-26</td><td>Активки</td><td>кулдаун уже в движке заклинаний, мана наша; свои активки — v2 (§11.8.6)</td><td>v2</td></tr><tr><td>Q-27</td><td>Кривая опыта</td><td>за моба — по <code>ΔLvl</code> (§3.1); на уровень — <code>60 × L²</code>, потолок 150, одно исключение (§3.2)</td><td>M2</td></tr><tr><td>Q-28</td><td>Числа маны</td><td>пул <code>50 + 3 × интеллект</code>, реген 1/с, цена каста 10 маны за тир (§4)</td><td>M4</td></tr><tr><td>Q-29</td><td>L1: «Слабость 6»</td><td><strong><code>amplifier 6</code></strong>; ванильный эффект значение за 255 держит только из кода, поэтому «расширять» не нужно; «ошеломление» пишем сами — инверсия ввода</td><td>M4</td></tr><tr><td>Q-30</td><td>Самопознание и Самобытность</td><td><strong>снят</strong>: удалены, духовных ровно три (Q-14)</td><td>—</td></tr><tr><td>Q-31</td><td>Сила → ёмкость веса</td><td><strong>миксин</strong> в <code>CapacityHelper.getFlatBonus</code> (решено 13.11)</td><td>M3</td></tr><tr><td>Q-32</td><td>Состав классов</td><td><strong>отложен</strong>: сначала всё остальное, классы живут в заметках</td><td>M6, позже</td></tr><tr><td>Q-33</td><td>«Око Амнезии»</td><td><strong>награда квеста или лут</strong>, не крафтится</td><td>M1</td></tr><tr><td>Q-34</td><td>Хп от класса и уровня</td><td><strong>отложен</strong> вместе с Q-32</td><td>M6, позже</td></tr><tr><td>Q-35</td><td>Три закрытых навыка</td><td><strong>отложен</strong>: «100 опыта в сфере» распишут позже</td><td>M6, позже</td></tr><tr><td>Q-36</td><td>L1: перекрытие порогов</td><td><strong>оба набора сразу</strong>: по общим эффектам верх берёт сильная ступень, «ошеломление» и «на грани смерти» действуют вместе (§11.6)</td><td>M4</td></tr><tr><td>Q-37</td><td>Уровень моба</td><td><strong>только CustomNPCs</strong>: на них всё завязано, за ванильных мобов опыт не даётся (§3.1)</td><td>M2</td></tr><tr><td>Q-38</td><td>Очки за уровни</td><td><strong>очко за каждый уровень + 3 очка на каждом пятом</strong> (<code>level + 3 × floor(level / 5)</code>, 240 на 150-м); бюджет 50 снят (§3.2)</td><td>M2</td></tr><tr><td>Q-39</td><td>Куда девать лишние очки</td><td><strong>очки только в пять физических, потолок 70</strong> (350 мест против 240); Упорство/Самообладание/Выдержка очками не качаются — только урон; <strong>+0.1 ко всем пяти за каждый уровень</strong> (§3.2)</td><td>M2</td></tr></tbody></table></div>
+<p>Сняты: Q-1 имя мода — <code>alarion</code>; Q-8 размер сервера — 2 игрока; Q-9 версия fabric-api — 0.116.17+1.21.1; Q-10…Q-12.</p>
+<hr>
+<h2 id="14-журнал">14. Журнал</h2>
+<ul></li><li><strong>11.11.2026</strong> — файл создан. Зафиксирован замысел из наработок (5 статов и их бонусы).</ul>
+<p>Решения: серверный мод без клиентской части; данные в Fabric Data Attachment; корень команд <code>/rpg</code>; мана и вес вынесены из v1 до ответов на Q-4/Q-5. Платформа снята с живого сервера (loader 0.20.1, fabric-api 0.116.17, PocketMC <code>axiom</code>), модовый набор проверен: заклинаний и веса нет. Кода нет.</p>
+<ul></li><li><strong>11.11.2026 (вечер)</strong> — пересмотр по итогам разбора <code>rpgcore-1.0.0.jar</code> и CustomNPCs:<ul><li><strong>клиентская часть есть</strong>, jar ставится на сервер и в клиент (§1);</li><li><code>rpgcore</code> — только источник идей (условные миксины CustomNPCs, стамина, амулет), не база:</li></ul></ul>
+<p>там 4 стата, своя левел-система 1–70, персист в NBT, жёсткая зависимость Trinkets (на сервере его нет). NPC-часть придётся переписать: урон NPC считается из <code>DataMelee</code>, а не из атрибута;</p>
+<ul><ul><li>CustomNPCs: статов игрока нет вообще, статусов нет, SPI нет — конфликтов не создаёт. Урон NPC</li></ul></ul>
+<p>идёт через свой тип <code>customnpcs:npc</code>, квесты завершаются <strong>только в JS-скрипт</strong>, Java-события нет (варианты — команда <code>/rpg grant</code> из скрипта, поллинг, миксин);</p>
+<ul><ul><li>состав характеристик: 5 физических + 3 защитных (ранги F..K) + 6 духовно-социальных (§10);</li><li><strong>баланс — данные</strong>: формулы строками, эффекты списком в JSON, новый тип эффекта — один</li></ul></ul>
+<p>applier (§11);</p>
+<ul><ul><li>JDK 21 поставлен: Temurin <code>21.0.13+9</code> в <code>C:\Users\zxcPap14\jdk21</code>, <code>JAVA_HOME</code> выставлен.</li><li>Кода по-прежнему нет.</li></ul></li><li><strong>11.11.2026 (M1, ядро)</strong> — написано и собрано (<code>alarion-0.1.0.jar</code>, 14 тестов):<ul><li><strong>Q-10 снят</strong>: <code>AttachmentRegistry.&lt;A&gt;builder().persistent(Codec).copyOnDeath().initializer(Supplier).buildAndRegister(Identifier)</code>;</li></ul></ul>
+<p>чтение/запись — <code>AttachmentTarget.getAttachedOrCreate</code>/<code>setAttached</code>, синк (<code>syncWith</code>) пока не подключён.</p>
+<ul><ul><li><code>dev.alarion.stats.StatsData</code> — неизменяемая запись <code>Map&lt;String, Entry(points, xp)&gt;</code> + <code>Codec</code></li></ul></ul>
+<p>(<code>Codec.unboundedMap</code>), тег <code>alarion:stats</code>, <code>copyOnDeath</code> (прогресс переживает смерть).</p>
+<ul><ul><li><code>dev.alarion.config.ConfigManager</code> — копирует <code>alarion/default-config.json</code> в <code>config/alarion.json</code></li></ul></ul>
+<p>при первом старте, держит один живой экземпляр, <code>/rpg reload</code> при ошибке оставляет прежний конфиг.</p>
+<ul><ul><li><code>dev.alarion.stats.AttributeApplier</code> — полный пересчёт: снимает <strong>все</strong> модификаторы с namespace</li></ul></ul>
+<p><code>alarion</code>, затем ставит заново по формуле; id модификатора <code>alarion:&lt;характеристика&gt;_&lt;индекс эффекта&gt;</code>, поэтому переименование/удаление эффекта в конфиге не оставляет мусора. Пересчёт на JOIN и на reload.</p>
+<ul><ul><li>Команды: <code>/rpg</code>, <code>/rpg reload</code>, <code>/rpg stats</code>, <code>/rpg add &lt;id&gt; &lt;очки&gt;</code>, <code>/rpg set &lt;id&gt; &lt;очки&gt;</code> (2 уровень).</li></ul></ul>
+<p>Вывод — одна строка <code>имя=уровень (очки/опыт)</code> в чат; HUD не трогали.</p>
+<ul><ul><li>Валидация конфига расширена: неизвестный тип эффекта, <code>effect=attribute</code> без <code>attribute</code>,</li></ul></ul>
+<p>неизвестная операция — предупреждения при загрузке, а не падение.</p>
+<ul><ul><li>Процесс: сборка запускается один раз на пачку файлов (просьба учтена).</li></ul></li><li><strong>11.11.2026 (версии и откат)</strong> — просьбы: выдавать версию один раз при смене префикса</ul>
+<p>(<code>0.1.0 → 0.2.0</code>) и хранить все старые версии с откатом руками и из Telegram.</p>
+<ul><ul><li><code>build.gradle</code>: <code>-Pquiet</code> кладёт оба jar в <code>build/dev/</code>, <code>build/libs/</code> не трогается;</li></ul></ul>
+<p>обычная сборка даёт ровно один <code>build/libs/alarion-&lt;версия&gt;.jar</code> (проверено обоими режимами).</p>
+<ul><ul><li>Откат уже есть в moddrop: <code>/history</code> в Telegram → кнопка «⬆ на сервер» → «🔄 Перезапустить»;</li></ul></ul>
+<p>файлы версий — <code>tools\moddrop\history\</code> (по одному на версию, не удаляются).</p>
+<ul><ul><li>Свой дублирующий скрипт архивации (<code>tools/mods.ps1</code>) написан и <strong>удалён</strong>: moddrop делает то же</li></ul></ul>
+<p>и уже связан с Telegram. Правило записано в §9 п.12.</p>
+<ul></li><li><strong>11.11.2026 (0.2.0, механики)</strong> — сводка статов, стамина, крит, очки:<ul><li><code>StatSheet</code> — все числа характеристик считаются один раз и читаются по каналам</li></ul></ul>
+<p>(<code>value</code>/<code>multiplier</code>/<code>chance</code>/<code>flag</code>), правила сложения — §11.3. Поле <code>stack</code> из конфига убрано: сложение теперь задано типом эффекта, а не характеристикой.</p>
+<ul><ul><li><code>Stamina</code> — текущее значение не сохраняется, после смерти/входа равно максимуму; бег тратит</li></ul></ul>
+<p><code>stamina.sprint_per_second</code> в секунду, удар рукой — <code>stamina.attack_cost</code>, оба умножаются на канал <code>stamina_cost</code>; при нуле бег снимается. Полоса — в actionbar раз в 0.5 с (<code>Стамина 132/180</code>).</p>
+<ul><ul><li><code>Combat</code> — удар рукой списывает стамину; если её хватило и выпал шанс канала <code>crit</code>, сверху</li></ul></ul>
+<p>наносится <code>урон * (crit_damage - 1)</code> отдельным <code>playerAttack</code>. Ванильный урон не переписывается.</p>
+<ul><ul><li><code>Points</code> — по очку за каждый новый уровень ванильного опыта, бюджет <code>points_budget</code> = 50 на всю</li></ul></ul>
+<p>игру; <code>/rpg allocate &lt;id&gt; &lt;очки&gt;</code> тратит запас (игрок сам), <code>/rpg respec</code> возвращает всё обратно, <code>/rpg add</code>/<code>/rpg set</code> остались админскими и запас не тратят. Опыт только вверх: понижение уровня очков не отнимает.</p>
+<ul><ul><li><code>StatsData</code> теперь объект <code>{entries, unspent, last_level}</code>; старая форма (голый map) не читается,</li></ul></ul>
+<p>но данных на сервере нет — мод туда ещё не ставили.</p>
+<ul><ul><li>Тесты: 22 (плюс <code>StatSheetTest</code> и <code>PointsTest</code>). Собрано <code>alarion-0.2.0.jar</code>, ушло в архив moddrop.</li></ul></li><li><strong>11.11.2026 (правило версий)</strong> — просьба: выдавать версию <strong>один раз при смене префикса</strong></ul>
+<p>(<code>0.1.0 → 0.2.0</code>), а не на каждый прогон. Записано в §9 п.12: имя jar не меняется внутри версии (<code>mod_version</code> в <code>gradle.properties</code>), сборка перезаписывает один и тот же <code>build/libs/alarion-0.1.0.jar</code>; отчёт и выдача — по вехам, промежуточные прогоны молча.</p>
+<ul></li><li><strong>11.11.2026 (0.2.1, живая проверка)</strong> — первый прогон механик не на глаз, а на настоящем</ul>
+<p>сервере с ботом-игроком (§8):</p>
+<ul><ul><li>найден и исправлен баг: <code>allocate</code>/<code>respec</code> меняли данные, но не пересчитывали модификаторы —</li></ul></ul>
+<p>скорость атаки/движения оставалась от прежнего значения до следующего входа или reload;</p>
+<ul><ul><li>второй край: <code>respec</code> мог выдать запас больше <code>points_budget</code> — теперь клампится;</li><li>все команды получили необязательного игрока (<code>/rpg stats &lt;ник&gt;</code>, <code>add|set &lt;id&gt; &lt;n&gt; [ник]</code>,</li></ul></ul>
+<p><code>allocate …[ник]</code>, <code>respec [ник]</code>), иначе с сервера их не проверить;</p>
+<ul><ul><li>прогон: 12/12 проверок, после перезапуска сервера 2/2 (статы и модификаторы на месте);</li><li><code>remapJar</code> теперь сам чистит прежние <code>alarion-*.jar</code> из <code>build/libs</code>, чтобы там был ровно</li></ul></ul>
+<p>один файл;</p>
+<ul><ul><li>выпущено <code>alarion-0.2.1.jar</code> (51 242 B).</li></ul></li><li><strong>11.11.2026 (машина сервера)</strong> — вопрос «делать всё на компе, где хостится сервер»:</ul>
+<p>нельзя. Там открыты только SMB (445) и порт Minecraft, SSH/WinRM/RCON закрыты, задач планировщика нет прав навешивать; из JDK только 26, Gradle нет. Сборка и прогоны остаются здесь, на сервер едет готовый jar. Подробности — §9 п.13–14.</p>
+<ul></li><li><strong>11.11.2026 (макет UI и пороги рангов)</strong> — от пользователя: фото «Окна статуса» и полная</ul>
+<p>кривая рангов. Ничего не кодилось, только зафиксировано:</p>
+<ul><ul><li><strong>Q-12 снят</strong>: пороги на каждый переход 800 / 1 600 / 2 400 / 3 200 / 4 000 (урон) и</li></ul></ul>
+<p>7 000 / 9 000 / 9 900 / 11 000 (опыт), всего 48 900 — таблица в §10.2;</p>
+<ul><ul><li>новая §12 — разбор макета: три зоны (модель + 4 слота брони, окно статуса с именем,</li></ul></ul>
+<p>уровнем, характеристиками и «+», золотые неиспользованные очки, лента пассивок F, панель «Описание» с лором и списком эффектов). Окно <strong>заменяет ванильный инвентарь</strong>;</p>
+<ul><ul><li>из макета выведены четыре новых вопроса: Q-16 (что считать «опытом» после A),</li></ul></ul>
+<p>Q-17 (список навыков и их эффекты), Q-18 (класс/титул), Q-19 (крафт и броня при замене инвентаря), Q-20 (мгновенное списание очка по «+»);</p>
+<ul><ul><li>нумерация: бывшие §12 «Открытые вопросы» и §13 «Журнал» стали §13 и §14.</li></ul></li><li><strong>11.11.2026 (карта зависимостей)</strong> — присланная схема (постер <code>Group 7.svg</code> + текстовая</ul>
+<p>расшифровка узлов) сведена в спеку не приложением, а правкой по месту:</p>
+<ul><ul><li>новая <strong>§11.8</strong> — боевая модель целиком: ресурсы (хп/мана/стамина) и их входы, три слоя</li></ul></ul>
+<p>защиты (физ армор, маг армор, резисты), три типа урона (физ/маг/чист), «оружие → тип урона», «эффект на врага», активки, плюс подраздел «что карта оставляет открытым» и «что это значит для кода»;</p>
+<ul><ul><li><strong>уточнения, снявшие двусмысленность</strong>: класс ману не даёт (<code>класс → статы → мана</code>); кинжал</li></ul></ul>
+<p>бьёт базово физическим, маг/чист — свойство конкретного предмета; «эффект на врага» накладывается не только кинжалом — это общий слой;</p>
+<ul><ul><li><strong>следствия для реализации</strong>: тип урона — свойство предмета, а не игрока (§5.10; теги вместо</li></ul></ul>
+<p>компонента дешевле); маг армор и резисты — каналы в attachment, а не атрибуты (§5.6); чистый урон требует своего <code>damage_type</code> с <code>bypasses_armor</code> (§5.7); мана осталась без стока, поэтому Q-4 переформулирован из «нужна ли» в «чем тратить»;</p>
+<ul><ul><li>правки по месту: §1 (статус «кода нет» → фактическое 0.2.1), §2 (ссылка на §11.8), §4 (мана и</li></ul></ul>
+<p>хп), §5 (+5 пунктов), §6.3 (+3 точки подключения), §7 (M4 — маг армор и резисты; v2 — типы урона, посох/кинжал, кольца, активки), §10 (терминология: «класс характеристик» ≠ «класс персонажа»), §11.3 (<code>pure</code> в <code>damage_taken.source</code>, <code>magic_armor</code> в <code>value</code>), §11.6 (DoT несёт тип урона), §12.1 (нижние слоты — возможно кольца), §13 (Q-4, Q-19 и новые Q-21…Q-26);</p>
+<ul><ul><li>кода не писалось; <code>MAP.md</code> не менялся — он по-прежнему держит первоначальное чтение постера.</li></ul></li><li><strong>12.11.2026 (моды: магия, вес, слоты — ответы на Q-2…Q-26)</strong> — в <code>tmp</code> присланы</ul>
+<p><code>ffitemweight-0.10.3</code> и пакет <code>Wizard (rpg)</code> из 12 jar (spell_power, spell_engine, wizards 3.1.3, runes, trinkets 3.10.0 и библиотеки). Разобраны CFR, сверены со спекой; решения внесены по месту:</p>
+<ul><ul><li><strong>§1</strong>: планируемый набор модов таблицей, ставится отдельным шагом, чужие моды разрешено править;</li><li><strong>§3</strong>: очки — свой опыт (ванильный не участвует) + квесты CustomNPCs; NPC получают уровень</li></ul></ul>
+<p>и случайные статы по тому же правилу, что игрок;</p>
+<ul><ul><li><strong>§4</strong>: мана есть — своя полоса поверх чужого каста; без маны каст не начинается (у модов</li></ul></ul>
+<p>маны нет вообще, цена каста там — кулдаун + руна);</p>
+<ul><ul><li><strong>§5</strong> переписан под моды: вес → FFItemWeight (бонус ёмкости от силы через миксин),</li></ul></ul>
+<p>сила заклинаний → <code>spell_power:generic</code>, маг армор → <code>spell_power:resistance.generic</code>, слоты → Trinkets (4 кольца + амулет), кинжалы — позже и через эффект [§11.8.5];</p>
+<ul><ul><li><strong>§6.2</strong> снят прежний риск: свои атрибуты регистрировать можно (так делают оба мода);</li></ul></ul>
+<p><strong>§6.3</strong> новые точки — начало каста, ёмкость веса, слоты Trinkets, <code>spell_power:resistance</code>;</p>
+<ul><ul><li><strong>§7</strong> этапы перестроены: магия и вес входят в M3–M4, HUD копируется с <code>rpgcore</code>, окно статуса</li></ul></ul>
+<p>заменяет инвентарь;</p>
+<ul><ul><li><strong>§10.2</strong>: 1 урон = 1 прогресс, счётчик сбрасывается рангом, все переходы от урона;</li></ul></ul>
+<p>у Упорства удалён бонус брони, у Самообладания маг. урон 6 % → <strong>4 %</strong>, «аномалии» стали длительностью эффекта, а не уроном;</p>
+<ul><ul><li><strong>§11.3</strong> <code>magic</code> = тег <code>c:is_magic</code>; <strong>§11.5</strong> в состояние добавлены <code>level</code>, <code>mana</code>, опыт</li></ul></ul>
+<p>уровня; <strong>§11.6</strong> переписан: <code>stun/immobilize/bleed</code> берём из <code>spell_engine</code>, свои — burn, poison-урон, нокдаун, плюс <strong>пороги L1</strong> (&gt;50 % хп и &gt;90 % хп) таблицей;</p>
+<ul><ul><li><strong>§11.8</strong> приведён к фактам модов (маг армор — чужой атрибут, магический урон — чужой,</li></ul></ul>
+<p>чистый — свой <code>damage_type</code>, посох — предмет Wizards);</p>
+<ul><ul><li><strong>§12</strong>: 4 слота брони + 5 слотов Trinkets, 2×2 удалён, рюкзак отдельным экраном, класс</li></ul></ul>
+<p>выбирается при первом входе, стартовые пассивки — три защитные;</p>
+<ul><ul><li><strong>§13</strong>: Q-2…Q-26 закрыты или сняты, добавлены Q-27…Q-34 (кривая опыта, числа маны, L1,</li></ul></ul>
+<p>Самопознание/Самобытность, ёмкость веса, состав классов, Око Амнезии, хп).</p>
+<ul><ul><li><strong>догон по Q-27/Q-28/Q-33</strong>: опыт за убийство считается по разнице уровней</li></ul></ul>
+<p>(<code>BaseEXP 100 × (1 + 0.05 × ΔLvl)</code>, для слабых — <code>× max(0, 1 + ΔLvl/10)</code>, ноль на −10 → §3.1); мана — пул <code>50 + 3×инт</code>, реген 1/с, 10 маны за тир заклинания (§4); «Око Амнезии» — награда квеста или лут, не крафтится (§6.4, Q-33);</p>
+<ul><ul><li><code>QUESTIONS.md</code> синхронизирован; <code>MAP.md</code> — нет, он держит первоначальное чтение постера.</li></ul></li><li><strong>13.11.2026 (ответы на Q-27…Q-37)</strong> — кривая уровня <code>60 × L²</code> с потолком 150 и одним</ul>
+<p>исключением (149 → 150 = 1 350 000), очки — по-прежнему бюджет 50 (§3.2); опыт только за CustomNPCs, ванильные мобы его не дают (§3.1); «Слабость 6» = <code>amplifier 6</code>, «ошеломление» пишем сами (§13); духовно-социальных ровно три — Проницательность, Достоинство, Мужество, шесть придуманных удалены (§10.3, §12.5, Q-14/Q-30); сила → ёмкость веса — миксин (§5.1, Q-31); стамина — числа из спеки: бег 8/с, удар 4 (Д-2); респек возвращает <strong>все</strong> потраченные очки (Д-3); классы и хп отложены (Q-32, Q-34). Открыто: Q-36 (перекрытие порогов 50/90 %) и Q-38 (очки после 50-го уровня). <code>QUESTIONS.md</code> синхронизирован, <code>MAP.md</code> — нет.</p>
+<ul></li><li><strong>13.11.2026 (Q-36, Q-38)</strong> — L1: удар, перекрывший 90 %, накладывает <strong>оба набора сразу</strong></ul>
+<p>(§11.6); очки — очко за каждый уровень плюс 3 на каждом пятом, бюджет 50 снят (§3.2). Отсюда вырос <strong>Q-39</strong>: на 150-м уровне 240 очков против 100 мест (5 характеристик × 20).</p>
+<ul></li><li><strong>13.11.2026 (Q-39)</strong> — потолок характеристики поднят до <strong>70</strong>, очки только в пять физических</ul>
+<p>(240 очков против 350 мест); Упорство/Самообладание/Выдержка очками не качаются, только урон (§10.2); введено <strong>+0.1 ко всем пяти за каждый уровень</strong> — значение характеристики стало дробным, <code>points</code> в состоянии остаются целыми (пересчёт на лету, §11.5), парсер считает <code>double</code> (§11.2).</p>
+  </main>
+</div>
+</body>
+</html>
